@@ -55,3 +55,4 @@ target/
 
 supervisord.conf
 
+.idea/
