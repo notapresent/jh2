@@ -10,7 +10,8 @@ class Config(object):
     APP_ENV = get_app_env()
     DEBUG = False
     TESTING = False
-    DATABASE_URI = 'mysql://rbm2m:rbm2m@localhost/dbm2m'
+    # TODO: ?charset=utf8
+    DATABASE_URI = 'mysql://rbm2m:rbm2m@localhost/rbm2m'
     REDIS_URI = 'redis://@localhost:6379/0'
 
 
@@ -25,3 +26,4 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    DATABASE_URI = 'mysql://rbm2m:rbm2m@localhost/rbm2m_test'
