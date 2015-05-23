@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-Dashboard
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="large-12 columns">
+      <h3>Статус</h3>
+
+      <p class="status">
+          <ul class="vcard text-center"><h4>123456</h4><li>Записей</li></ul>
+          <ul class="vcard text-center"><h4>12345</h4><li>В наличии</li></ul>
+          <ul class="vcard text-center"><h4>234567</h4><li>Картинок</li></ul>
+          <ul class="vcard text-center"><h4>4321</h4><li>Лотов</li></ul>
+          <ul class="vcard text-center"><h4>0</h4><li>Ошибок</li></ul>
+        </p>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Сканы</h3>
+      <ul class="scans">
+          <li class="scan">
+            <h1 class="icon"><i class="fi-download"></i></h1>
+            <h4>Rock &amp; Pop</h4>
+              <div class="right scanstats text-right">
+                  <small>150 страниц из 900</small><br>
+                    <small>~ 2 часа 30 минут</small>
+
+
+              </div>
+
+      <div class="progress">
+            <span class="meter" style="width: 20%"></span>
+        </div>
+
+            </li>
+
+      </ul>
+  </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

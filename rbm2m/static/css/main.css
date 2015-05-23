@@ -1,0 +1,44 @@
+body {
+    background-color: #eee;
+}
+
+div.row {
+    background-color: #fff;
+}
+
+.titlebar {
+    background-color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.titlebar a, .icon-bar a {
+    color: #eee;
+}
+
+.topnav {
+    padding-bottom: 1em;
+}
+
+ul.vcard {
+    margin-left: .3em;
+    margin-right: .3em;
+}
+
+ul.scans {
+    margin-right: 1.1rem;
+}
+li.scan {
+    list-style-type: none;
+    border: 1px solid #eee;
+    padding: .5em;
+}
+
+h1.icon, li.scan h4 {
+    display: inline-block;
+    margin-right: .25em;
+    margin-left: .25em;
+}
+
+.scanstats {
+
+}
