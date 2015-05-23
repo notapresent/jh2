@@ -9,11 +9,13 @@ class Config(object):
     APP_ENV = app_environment
     DEBUG = False
     TESTING = False
-    # TODO: ?charset=utf8
     REDIS_URI = 'redis://@localhost:6379/0'
+    BASIC_AUTH_USERNAME = os.environ['RBM2M_LOGIN']
+    BASIC_AUTH_PASSWORD = os.environ['RBM2_PASSWORD']
 
 
 class ProductionConfig(Config):
+    # TODO: ?charset=utf8
     SQLALCHEMY_DATABASE_URI = os.environ.get('RBM2M_DATABASE_URI')
     REDIS_URI = os.environ.get('RBM2M_REDIS_URI')
 
