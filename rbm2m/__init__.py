@@ -11,6 +11,7 @@ __version__ = '0.3'
 db = SQLAlchemy()
 basic_auth = BasicAuth()
 
+
 def create_app(app_env):
     app = Flask(__name__)
     app.config.from_object('rbm2m.config.{}Config'.format(app_env))
@@ -23,5 +24,3 @@ def create_app(app_env):
     app.register_blueprint(frontend)
 
     return app
-
-

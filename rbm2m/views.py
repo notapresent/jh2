@@ -6,6 +6,7 @@ from . import basic_auth
 
 frontend = Blueprint('frontend', __name__)
 
+
 @frontend.route('/')
 @basic_auth.required
 def home():
