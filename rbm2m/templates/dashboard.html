@@ -1,32 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
+<div class="row vspace">
     <div class="large-12 columns">
-        <h3>Статус</h3>
+        <h3>Состояние</h3>
 
-        <p class="status">
-        <ul class="vcard text-center"><h4>123456</h4>
-            <li>Записей</li>
+        <ul class="small-block-grid-6 status text-center">
+            <li><div><h4>123456</h4><span>Записей</span></div></li>
+            <li><div><h4>12345</h4><span>В наличии</span></div></li>
+            <li><div><h4>234567</h4><span>Картинок</span></div></li>
+            <li><div><h4>34.5</h4><span>Гигабайт</span></div></li>
+            <li><div><h4>4321</h4><span>Лотов</span></div></li>
+            <li><div><h4>7</h4><span>Ошибок</span></div></li>
+
+
         </ul>
-        <ul class="vcard text-center"><h4>12345</h4>
-            <li>В наличии</li>
-        </ul>
-        <ul class="vcard text-center"><h4>234567</h4>
-            <li>Картинок</li>
-        </ul>
-        <ul class="vcard text-center"><h4>4321</h4>
-            <li>Лотов</li>
-        </ul>
-        <ul class="vcard text-center"><h4>0</h4>
-            <li>Ошибок</li>
-        </ul>
-        </p>
     </div>
-
 </div>
-
-<div class="row">
+<div class="row vspace">
     <div class="large-12 columns">
         <h3>Сканы</h3>
         <ul class="scans">
@@ -51,10 +42,7 @@
 
         </ul>
     </div>
-
 </div>
 
-
-</div>
 
 {% endblock %}
