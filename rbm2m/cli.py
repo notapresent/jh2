@@ -4,6 +4,7 @@ import click
 from rbm2m import db, create_app, config
 from rbm2m.models.genremanager import GenreManager
 
+
 @click.group()
 def main():
     pass

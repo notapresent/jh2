@@ -8,4 +8,3 @@ webui = Blueprint('webui', __name__, template_folder='templates')
 @webui.route('/')
 def show():
     return render_template('dashboard.html')
-
