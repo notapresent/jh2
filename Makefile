@@ -6,9 +6,8 @@ test:
 	# TODO use actual command
 	py.test tests examples
 
-run:
-	# TODO use actual command
-	python scripts/make-release.py
+serve:
+	python wsgi.py
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +

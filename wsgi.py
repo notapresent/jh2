@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from rbm2m import create_app
+from rbm2m.config import app_environment
 
-from rbm2m import config, create_app
 
-app = create_app(config.app_environment)
+app = create_app(app_environment)
 
 if __name__ == "__main__":
     app.run()

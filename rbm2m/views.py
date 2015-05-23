@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, abort
+from flask import render_template, abort, url_for, Blueprint
+
+from . import basic_auth
 
 
-webui = Blueprint('webui', __name__, template_folder='templates')
+frontend = Blueprint('frontend', __name__)
 
-
-@webui.route('/')
-def show():
+@frontend.route('/')
+@basic_auth.required
+def home():
     return render_template('dashboard.html')
