@@ -2,11 +2,7 @@
 import os
 
 
-app_environment = os.environ.get('RBM2M_ENV', 'Production')
-
-
 class Config(object):
-    APP_ENV = app_environment
     DEBUG = False
     TESTING = False
     REDIS_URI = 'redis://@localhost:6379/0'
