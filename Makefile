@@ -13,3 +13,9 @@ clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
+
+initdb:
+	python -m rbm2m initdb
+
+dropdb:
+	python -m rbm2m dropdb
