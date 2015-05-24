@@ -7,7 +7,7 @@ class Config(object):
     TESTING = False
     REDIS_URI = 'redis://@localhost:6379/0'
     BASIC_AUTH_USERNAME = os.environ['RBM2M_LOGIN']
-    BASIC_AUTH_PASSWORD = os.environ['RBM2_PASSWORD']
+    BASIC_AUTH_PASSWORD = os.environ['RBM2M_PASSWORD']
 
 
 class ProductionConfig(Config):
