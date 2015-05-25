@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from rbm2m.models import Genre
-from rbm2m.models.parsers import parse_genres
-from rbm2m.models.downloader import Downloader
+from . import Genre, scraper
 
-# TODO refactor to Scraper.get_genre_list()
+
+# TODO refactor this
 class GenreManager(object):
     @staticmethod
     def import_genres(session):
-        html = Downloader.get_genre_list()
-        for title in parse_genres(html):
+
+        for title in scraper.genre_list():
             session.add(Genre(title=title))
         session.commit()

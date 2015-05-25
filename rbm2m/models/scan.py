@@ -17,7 +17,13 @@ class Scan(Base):
     status = Column(String(50), nullable=False)
 
     genre = relationship("Genre", backref=backref('scans', order_by=id))
-    # records = relationship("Record")  # TODO many-to-many reltionship
+    # records = relationship("Record")  # TODO many-to-many relationship
+
+    @classmethod
+    def get_current(cls, genre_id, session):
+        return session.query(cls) \
+            .filter_by(genre_id=genre_id, status='started') \
+            .first()
 
 
 class ScanRecord(Base):
