@@ -16,10 +16,9 @@ def create_app(app_env):
     app = Flask(__name__)
     app.config.from_object('rbm2m.config.{}Config'.format(app_env))
 
-    # from rbm2m.models.db import *
-
     db.init_app(app)
     basic_auth.init_app(app)
+
     from rbm2m.views import frontend, api
     app.register_blueprint(frontend.bp)
     app.register_blueprint(api.bp, url_prefix='/api')
