@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-import os
-
 import click
 
-from rbm2m import create_app
-from rbm2m.models.db import *
-from rbm2m.models.genremanager import GenreManager
+from redis import StrictRedis
 
-app_env = os.environ.get('RBM2M_ENV', 'Production')
+from rbm2m.models.base import Base
+from rbm2m.models import *
+from rbm2m.models.genremanager import GenreManager
+from helpers import make_session, make_config, make_engine
+
+
+config = make_config()
+engine = make_engine(config)
+
 
 
 @click.group()
@@ -16,18 +20,26 @@ def main():
 
 
 @main.command()
-def initdb():
-    app = create_app(app_env)
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        GenreManager.import_genres(db.session)
-    click.echo('Initialized the database')
+def createdb():
+    Base.metadata.create_all(bind=engine)
+    click.echo('Database initialized')
 
 
 @main.command()
 def dropdb():
-    app = create_app(app_env)
-    with app.app_context():
-        db.drop_all()
-    click.echo('Dropped the database')
+    Base.metadata.drop_all(bind=engine)
+    click.echo('Database dropped')
+
+
+@main.command()
+def import_genres():
+    session = make_session(engine)
+    GenreManager.import_genres(session)
+    click.echo('Genres imported')
+
+
+@main.command()
+def flush_redis():
+    redis = StrictRedis.from_url(config.REDIS_URL)
+    redis.flushdb()
+    click.echo('Redis DB flushed')

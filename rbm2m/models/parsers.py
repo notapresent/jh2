@@ -10,3 +10,6 @@ def parse_genres(html):
     items = lst.find_all('li')
     for item in items:
         yield to_unicode(item.a.text).strip()
+
+def get_num_pages(html):
+    pass

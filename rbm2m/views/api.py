@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, current_app
 
-from rbm2m import basic_auth, db
-from rbm2m.models import scheduler
-from rbm2m.models.db import get_stats, Scan
+from ..webapp import db, redis, basic_auth
+from ..models import Scan, scheduler
+from ..helpers import get_stats
 
 
 bp = Blueprint('api', __name__)
@@ -18,25 +18,29 @@ def check_auth():
 @bp.route('/stats')
 def status():
     stats = get_stats(db.session)
-    scans = Scan.get_last_scans()
+    scans = db.session.query(Scan).order_by(-Scan.started_at).limit(5).all()
     return jsonify({'stats': stats, 'scans': scans})
 
 
 @bp.route('/run_scan/<int:genre_id>')
 def run_scan(genre_id):
+    sched = scheduler.Scheduler(db.session, redis._redis_client,
+                                current_app.config['RQ_QUEUE_NAME'])
     try:
-        scan = scheduler.start_scan(genre_id, db.session)
+        job = sched.run_scan(genre_id)
     except scheduler.AlreadyStarted as e:
         return jsonify({'success': False, 'message': str(e)})
     else:
-        return jsonify({'success': True, 'scan_id': scan.id})
+        return jsonify({'success': True, 'job_id': job.id})
 
 
 @bp.route('/abort_scan/<int:scan_id>')
 def abort_scan(scan_id):
+    sched = scheduler.Scheduler(db.session, redis._redis_client,
+                                current_app.config['RQ_QUEUE_NAME'])
     try:
-        scheduler.abort_scan(scan_id)
-    except scheduler.ScheduleError as e:
+        sched.abort_scan(scan_id)
+    except scheduler.SchedulerError as e:
         return jsonify({'success': False, 'message': str(e)})
     else:
         return jsonify({'success': True})
