@@ -27,11 +27,11 @@ def run_scan(genre_id):
     sched = scheduler.Scheduler(db.session, redis._redis_client,
                                 current_app.config['RQ_QUEUE_NAME'])
     try:
-        job = sched.run_scan(genre_id)
+        sched.run_scan(genre_id)
     except scheduler.AlreadyStarted as e:
         return jsonify({'success': False, 'message': str(e)})
     else:
-        return jsonify({'success': True, 'job_id': job.id})
+        return jsonify({'success': True})
 
 
 @bp.route('/abort_scan/<int:scan_id>')

@@ -20,8 +20,8 @@ def finish_scan(scan_dict, pages, status):
     scheduler.finish_scan(scan_dict, pages, status)
 
 
-def run_task(scan_dict, genre_title, page):
-    scheduler.run_task(scan_dict, genre_title, page)
+def task(scan_id, page=0):
+    scheduler.run_task(scan_id, page)
 
 
 def abort_scan(scan_id):

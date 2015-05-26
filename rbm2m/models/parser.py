@@ -17,3 +17,10 @@ def parse_page(html):
     soup = BeautifulSoup(html)
     # TODO
     return [], False, -1
+
+
+class ParseError(Exception):
+    """
+    Raised for all parse errors.
+    """
+    pass

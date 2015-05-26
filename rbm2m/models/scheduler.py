@@ -3,7 +3,7 @@ import datetime
 
 from rq import Queue
 
-from . import Record, Scan, Genre, Image, scraper
+from . import Record, Scan, Image, scraper
 
 
 class Scheduler(object):
@@ -16,66 +16,71 @@ class Scheduler(object):
     def run_scan(self, genre_id):
         current_scan = Scan.get_current(genre_id, self.session)
         if current_scan:
-            raise AlreadyStarted('Scan for genre #%d already started: %s'
-                                 % (genre_id, current_scan))
+            raise AlreadyStarted('Scan for genre #{} is already started: '
+                                 '{}'.format(genre_id, current_scan))
 
         self.queue.enqueue('rbm2m.worker.start_scan', genre_id)
 
-    def abort_scan(self, scan_id):
-        scan = self.session.query(Scan).filter_by(Scan.id==scan_id).one()
-        scan.status = 'aborted'
-        self.session.add(scan)
-        self.session.commit()
-
     def start_scan(self, genre_id):
-        genre = Genre.get(genre_id)
-        _, num_records, _ = scraper.parse_page(genre.title)
-        scan = Scan(genre_id=genre_id, started=datetime.datetime.utcnow(),
-                    status='started', num_records=num_records)
+        scan = Scan(genre_id=genre_id,
+                    started_at=datetime.datetime.utcnow(),
+                    status='started')
         self.session.add(scan)
         self.session.commit()
-        print "*** Starting scan #%d for genre %d" % (scan.id, genre_id)
+        print "*** Starting scan #{} for genre {}".format(scan.id, genre_id)
 
-        self.queue.enqueue('run_task', scan.to_dict(), genre.title)
+        self.queue.enqueue('rbm2m.worker.task', scan.id)
 
-    def finish_scan(self, scan_dict, pages, status):
-        print "*** Scan #{} finished with status {} ({} pages)".format(
-            scan_dict['id'], status, pages+1)
-        scan = Scan.get(scan_dict['id'])
+    def abort_scan(self, scan_id):
+        self.finish_scan(scan_id, 'aborted')
+
+    def finish_scan(self, scan_id, status):
+        print "*** Scan #{} finished with status {}".format(scan_id, status)
+        scan = self.session.query(Scan).get(scan_id)
         scan.status = status
-        self.session.add(scan)
+        scan.finished_at = datetime.datetime.utcnow()
+        self.session.add(scan)  # TODO really needed?
         self.session.commit()
 
-    def run_task(self, scan_dict, genre_title, page=0):
-        scan = Scan.get(scan_dict['id'])
+    def run_task(self, scan_id, page=0):
+        scan = self.session.query(Scan).get(scan_id)
         if scan.status == 'aborted':
-            self.queue.enqueue('finish_scan', scan_dict, page, 'aborted')
+            return
             
         try:
-            records, next_page, num_records = scraper.scrape_page(genre_title, page)
-        except scraper.ScrapeFailed, e:
-            self.queue.enqueue('finish_scan', scan_dict, page, 'failure')
+            records, rec_count, next_page = scraper.scrape_page(scan.genre.title, page)
+        except scraper.ScrapeError:
+            self.queue.enqueue('rbm2m.worker.finish_scan', scan_id, 'failed')
+            return
+
+        # Update estimated records count every 10 pages
+        if page % 10 == 0:
+            self.session.query(Scan).filter_by(id=scan_id) \
+                .update({Scan.num_records: rec_count})
 
         # records: [(id, {values}), ...]
-        ids = [rid for rid, rv in records]
-        existing_ids = self.session.query(Record.id).filter(Record.id in ids).all()
+        record_ids = [rid for rid, rec in records]
+        existing_ids = self.session.query(Record.id) \
+            .filter(Record.id in record_ids) \
+            .all()
 
-        # new_ids = list(set(ids) - {rec_id for (rec_id,) in existing_ids})
-        for rid, rv in records:
-            if rid in existing_ids:
+        for rec_id, rec in records:
+            if rec_id in existing_ids:
                 continue
-            rec = Record(**rv)
-            for imgurl in rv['images']:
-                rec.images.append(Image(url=imgurl))
-            self.session.add(rec)
+            image_urls = rec.pop('images', [])
+            record = Record(**rec)
+            for img_url in image_urls:
+                rec.images.append(Image(url=img_url))
+            self.session.add(record)
 
         self.session.commit()
-        print "Scan #%d page #%d - %d items, %d new" % (scan_dict['id'], page, len(ids), len(ids)-len(existing_ids))
+        print "Scan #{} / page #{} - {} items, {} new".format(
+            scan_id, page, len(records), len(records)-len(existing_ids))
 
         if next_page:
-            self.queue.enqueue('task', scan_dict, genre_title, page+1)
+            self.queue.enqueue('rbm2m.worker.task', scan_id, page+1, timeout=300)
         else:
-            self.queue.enqueue('finish_scan', scan_dict, page, 'success')
+            self.queue.enqueue('rbm2m.worker.finish_scan', scan_id, 'success')
 
 
 class SchedulerError(Exception):
