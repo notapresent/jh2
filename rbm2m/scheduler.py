@@ -3,7 +3,8 @@ import datetime
 
 from rq import Queue
 
-from . import Record, Scan, Image, scraper
+from .models import Record, Scan, Image
+from . import scraper
 
 
 class Scheduler(object):

@@ -2,7 +2,8 @@
 from flask import Blueprint, jsonify, current_app
 
 from ..webapp import db, redis, basic_auth
-from ..models import Scan, scheduler
+from ..models import Scan
+from rbm2m import scheduler
 from ..helpers import get_stats
 
 

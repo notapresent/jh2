@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+    Flask app initialization
+"""
+
 from flask import Flask
 from flask.ext.basicauth import BasicAuth
 from flask.ext.redis import FlaskRedis
 from flask.ext.sqlalchemy import SQLAlchemy
-
-
-__version__ = '0.3'
 
 
 db = SQLAlchemy()

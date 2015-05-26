@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from ..helpers import retry
-from . import downloader, parser
+from rbm2m.helpers import retry
+from rbm2m import parser, downloader
 
 
 class ScrapeError(Exception):

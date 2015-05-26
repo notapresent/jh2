@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from redis import StrictRedis
 
-from rbm2m.models.scheduler import Scheduler
+from rbm2m.scheduler import Scheduler
 from rbm2m.helpers import make_session, make_config, make_engine
 
 

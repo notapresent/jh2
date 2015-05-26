@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+    This package contains SQLAlchemy model classes
+"""
+
 from .genre import Genre
 from .image import Image
 from .record import Record, RecordStatus
