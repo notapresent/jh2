@@ -20,13 +20,13 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 createdb:
-	python -m rbm2m createdb
+	@python -m rbm2m createdb
 
 dropdb:
-	python -m rbm2m dropdb
+	@python -m rbm2m dropdb
 
 init:
-	python -m rbm2m dropdb
-	python -m rbm2m createdb
-	python -m rbm2m flush_redis
-	python -m rbm2m import_genres
+	@python -m rbm2m dropdb
+	@python -m rbm2m createdb
+	@python -m rbm2m flush_redis
+	@python -m rbm2m import_genres

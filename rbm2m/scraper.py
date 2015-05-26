@@ -39,3 +39,15 @@ def genre_list():
         return parser.parse_genres(html)
     except (downloader.DownloadError, parser.ParseError) as e:
         raise ScrapeError(str(e))
+
+
+@retry(ScrapeError, tries=2, delay=5)
+def image_list(rec_id):
+    """
+        Downloads list of images for a record
+    """
+    try:
+        json = downloader.get_image_list(rec_id)
+        return parser.parse_image_list(json)
+    except (downloader.DownloadError, parser.ParseError) as e:
+        raise ScrapeError(str(e))

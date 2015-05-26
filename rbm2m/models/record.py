@@ -16,6 +16,7 @@ class Record(Base):
     label = Column(String(250), nullable=False)
     notes = Column(String(500))
     grade = Column(String(16), nullable=False)
+    format = Column(String(2), nullable=False)
     price = Column(Integer)
 
     genre = relationship("Genre", backref=backref('records', order_by=id))

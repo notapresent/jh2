@@ -16,8 +16,8 @@ def start_scan(genre_id):
     scheduler.start_scan(genre_id)
 
 
-def finish_scan(scan_dict, pages, status):
-    scheduler.finish_scan(scan_dict, pages, status)
+def finish_scan(scan_id, status):
+    scheduler.finish_scan(scan_id, status)
 
 
 def task(scan_id, page=0):
@@ -26,3 +26,6 @@ def task(scan_id, page=0):
 
 def abort_scan(scan_id):
     scheduler.abort_scan(scan_id)
+
+def get_images(rec_id):
+    scheduler.get_images(rec_id)
