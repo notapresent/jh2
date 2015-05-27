@@ -59,8 +59,6 @@ class Scheduler(object):
             self.queue.enqueue('rbm2m.worker.finish_scan', scan_id, 'failed')
             return
 
-        records = list(records)
-
         # Update estimated records count every 10 pages
         if page % 10 == 0:
             self.session.query(Scan).filter_by(id=scan_id) \
@@ -68,9 +66,12 @@ class Scheduler(object):
 
         # records: [(id, {values}), ...]
         record_ids = [rid for rid, rec in records]
-        existing_ids = self.session.query(Record.id) \
-            .filter(Record.id in record_ids) \
+        existing_records = (
+            self.session.query(Record.id)
+            .filter(Record.id.in_(record_ids))
             .all()
+        )
+        existing_ids = [rec_id for (rec_id,) in existing_records]
 
         fetch_images = []
         for rec_id, rec in records:

@@ -20,7 +20,7 @@ def parse_genres(html):
 def parse_page(html):
     try:
         soup = bs4.BeautifulSoup(html)
-        records = extract_records(soup)
+        records = list(extract_records(soup))
         next_page = extract_next_page(soup)
         total_count = extract_total_count(soup)
 
