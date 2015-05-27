@@ -14,7 +14,7 @@ class Record(Base):
     artist = Column(String(250), nullable=False)
     title = Column(String(250), nullable=False)
     label = Column(String(250), nullable=False)
-    notes = Column(String(500))
+    notes = Column(String(2500))
     grade = Column(String(16), nullable=False)
     format = Column(String(2), nullable=False)
     price = Column(Integer)
