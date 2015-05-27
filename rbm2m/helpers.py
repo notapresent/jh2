@@ -4,7 +4,9 @@ import time
 from functools import wraps
 
 from sqlalchemy import create_engine, func
+from sqlalchemy.ext import compiler
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import expression
 
 from . import config
 from models.record import Record
@@ -86,3 +88,23 @@ def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
         return f_retry  # true decorator
 
     return deco_retry
+
+
+class group_concat(expression.FunctionElement):
+    """
+        Custom function for use with SQLAlchemy
+    """
+    name = "group_concat"
+
+
+@compiler.compiles(group_concat, 'mysql')
+def _group_concat_mysql(element, compilr, **kw):
+    if len(element.clauses) == 2:
+        separator = compilr.process(element.clauses.clauses[1])
+    else:
+        separator = ','
+
+    return 'GROUP_CONCAT(%s SEPARATOR %s)'.format(
+        compilr.process(element.clauses.clauses[0]),
+        separator,
+    )

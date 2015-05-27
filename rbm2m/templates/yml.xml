@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="{{ generation_date.strftime('%Y-%m-%d %H:%M') }}">
+    <shop>
+        <name>RBM2M</name>
+        <company>RBM2M</company>
+        <url>http://rbm2m.com/</url> {# TODO Real URL here #}
+
+        <currencies>
+            <currency id="RUR" rate="1" plus="0"/>
+        </currencies>
+
+        <categories>
+            {% for cat in categories -%}
+            <category id="{{ cat.id }}"
+            {{-
+                ' parentId="%d"'|format(cat.parent_id) if cat.parent_id else ''
+            -}}>{{ cat.title }}</category>
+            {% endfor %}
+        </categories>
+
+        <offers>
+            {% for o in offers -%}
+                <offer id="{{ o.id}}" type="artist.title"{# available="true" bid="11" #}>
+                    {# <url>http://best.seller.ru/product_page.asp?pid=12946</url> -#}
+                    <price>{{ o.price }}</price>
+                    <currencyId>RUR</currencyId>
+                    <categoryId>{{ o.category_id }}</categoryId>
+                    {% for url in o.images -%}
+                        <picture>{{ url }}</picture>
+                    {% endfor -%}
+                    <store>false</store>
+                    <pickup>false</pickup>
+                    <delivery>false</delivery>
+                    <artist>{{ o.artist }}</artist>
+                    <title>{{ o.title }}</title>
+                    {# <year>1999<year> -#}
+                    <media>{{ o.format }}</media>
+                    {# <barcode>1234567890123</barcode> -#}
+                    <description>{{ o.description }}</description>
+                </offer>
+            {% endfor %}
+        </offers>
+    </shop>
+</yml_catalog>
