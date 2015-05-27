@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row vspace">
+    <div class="large-12 columns">
+        <h3>Жанры</h3>
+
+        <table role="grid" class="wide">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Импортировать</th>
+                <th>Экспортировать</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for genre in genres: %}
+            <tr>
+                <td>{{ genre.id }}</td>
+                <td><h5>{{ genre.title }}</h5></td>
+                <td>
+                    <div class="switch">
+                        <input id="import-{{ genre.id }}"
+                               data-genre_id="{{ genre.id }}"
+                               data-field="import_enabled"
+                               type="checkbox"
+                               {{ 'checked' if genre.import_enabled else '' }}>
+                        <label for="import-{{ genre.id}}"></label>
+                    </div>
+                </td>
+                <td>
+                    <div class="switch">
+
+                        <input id="export-{{ genre.id}}"
+                               data-genre_id="{{ genre.id }}"
+                               data-field="export_enabled"
+                               type="checkbox"
+                               {{ 'checked' if genre.export_enabled else '' }}>
+                        <label for="export-{{ genre.id}}"></label>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script>
+    $(function(){
+        $('.switch input:checkbox').change(function(){
+            var gid = $(this).data('genre_id');
+            var field = $(this).data('field');
+            $.getJSON(
+                '{{ url_for("api.update_genre") }}',
+                {gid: gid, f: field, v: + this.checked},
+                function(){
+
+                });
+        });
+    });
+</script>
+{% endblock %}

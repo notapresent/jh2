@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
-from ..models import Scan
+from ..models import Scan, Genre
 from rbm2m import scheduler
 from ..helpers import get_stats
 
@@ -44,3 +44,15 @@ def abort_scan(scan_id):
         return jsonify({'success': False, 'message': str(e)})
     else:
         return jsonify({'success': True})
+
+@bp.route('/update_genre')
+def update_genre():
+    genre_id = request.args['gid']
+    field = request.args['f']
+    value = int(request.args['v'])
+
+    db.session.query(Genre) \
+        .filter_by(id=genre_id) \
+        .update({getattr(Genre, field): value})
+    db.session.commit()
+    return jsonify({'success': True})

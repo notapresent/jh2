@@ -47,3 +47,7 @@ h1.icon, li.scan h4 {
 .scanstats {
     font-size: small;
 }
+
+table.wide {
+    width: 100%;
+}
