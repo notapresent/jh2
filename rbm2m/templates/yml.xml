@@ -11,21 +11,18 @@
         </currencies>
 
         <categories>
-            {% for cat in categories -%}
-            <category id="{{ cat.id }}"
-            {{-
-                ' parentId="%d"'|format(cat.parent_id) if cat.parent_id else ''
-            -}}>{{ cat.title }}</category>
+            {% for g in genres -%}
+            <category id="{{ g.id }}">{{ g.title }}</category>
             {% endfor %}
         </categories>
 
         <offers>
             {% for o in offers -%}
                 <offer id="{{ o.id}}" type="artist.title"{# available="true" bid="11" #}>
-                    {# <url>http://best.seller.ru/product_page.asp?pid=12946</url> -#}
+                    {# <url>http://rbm2m.com?rid=12946</url> -#}
                     <price>{{ o.price }}</price>
                     <currencyId>RUR</currencyId>
-                    <categoryId>{{ o.category_id }}</categoryId>
+                    <categoryId>{{ o.genre_id }}</categoryId>
                     {% for url in o.images -%}
                         <picture>{{ url }}</picture>
                     {% endfor -%}
@@ -34,9 +31,7 @@
                     <delivery>false</delivery>
                     <artist>{{ o.artist }}</artist>
                     <title>{{ o.title }}</title>
-                    {# <year>1999<year> -#}
                     <media>{{ o.format }}</media>
-                    {# <barcode>1234567890123</barcode> -#}
                     <description>{{ o.description }}</description>
                 </offer>
             {% endfor %}

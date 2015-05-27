@@ -67,11 +67,9 @@ class Scheduler(object):
         # records: [(id, {values}), ...]
         record_ids = [rid for rid, rec in records]
         existing_records = (
-            self.session.query(Record.id)
-            .filter(Record.id.in_(record_ids))
-            .all()
-        )
-        existing_ids = [rec_id for (rec_id,) in existing_records]
+            self.session.query(Record.id).filter(Record.id.in_(record_ids))
+            .all())
+        existing_ids = [rec_id for (rec_id, ) in existing_records]
 
         fetch_images = []
         for rec_id, rec in records:

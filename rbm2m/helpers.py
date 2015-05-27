@@ -105,6 +105,4 @@ def _group_concat_mysql(element, compilr, **kw):
         separator = ','
 
     return 'GROUP_CONCAT(%s SEPARATOR %s)'.format(
-        compilr.process(element.clauses.clauses[0]),
-        separator,
-    )
+        compilr.process(element.clauses.clauses[0]), separator, )
