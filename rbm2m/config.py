@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-
 """ Default configuration"""
+
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -11,7 +12,6 @@ class Config(object):
     SQLALCHEMY_ECHO = False
     BASIC_AUTH_USERNAME = os.environ['RBM2M_LOGIN']
     BASIC_AUTH_PASSWORD = os.environ['RBM2M_PASSWORD']
-
 
 
 class ProductionConfig(Config):

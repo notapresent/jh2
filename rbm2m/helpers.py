@@ -6,7 +6,7 @@ from functools import wraps
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
-from .import config
+from . import config
 from models.record import Record
 from models.image import Image
 
@@ -14,8 +14,7 @@ from models.image import Image
 def make_engine(cfg):
     return create_engine(
         cfg.SQLALCHEMY_DATABASE_URI,
-        echo=cfg.SQLALCHEMY_ECHO,
-        # client_encoding='utf8'    # TODO
+        echo=cfg.SQLALCHEMY_ECHO,  # client_encoding='utf8'    # TODO
     )
 
 
@@ -65,8 +64,8 @@ def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
     :param logger: logger to use. If None, print
     :type logger: logging.Logger instance
     """
-    def deco_retry(f):
 
+    def deco_retry(f):
         @wraps(f)
         def f_retry(*args, **kwargs):
             mtries, mdelay = tries, delay

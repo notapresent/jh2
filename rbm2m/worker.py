@@ -4,12 +4,12 @@ from redis import StrictRedis
 from rbm2m.scheduler import Scheduler
 from rbm2m.helpers import make_session, make_config, make_engine
 
-
 config = make_config()
 session = make_session(engine=make_engine(config))
 redis_conn = StrictRedis.from_url(config.REDIS_URL)
 
 scheduler = Scheduler(session, redis_conn, config.RQ_QUEUE_NAME)
+
 
 # TODO: Refactor this atrocity
 def start_scan(genre_id):
@@ -26,6 +26,7 @@ def task(scan_id, page=0):
 
 def abort_scan(scan_id):
     scheduler.abort_scan(scan_id)
+
 
 def get_images(rec_id):
     scheduler.get_images(rec_id)

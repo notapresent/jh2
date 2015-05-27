@@ -30,4 +30,3 @@ class ScanRecord(Base):
     __tablename__ = 'scan_records'
     scan_id = Column(Integer, ForeignKey('scans.id'), primary_key=True)
     record_id = Column(Integer, ForeignKey('records.id'), primary_key=True)
-

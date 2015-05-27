@@ -24,6 +24,7 @@ class Record(Base):
 
 class RecordStatus(Base):
     __tablename__ = 'record_status'
-    record_id = Column(Integer, ForeignKey('records.id'), primary_key=True,
+    record_id = Column(Integer, ForeignKey('records.id'),
+                       primary_key=True,
                        autoincrement=False)
     status = Column(String(50), nullable=False)

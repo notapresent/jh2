@@ -7,10 +7,8 @@ from .models import Genre
 from . import scraper
 from helpers import make_session, make_config, make_engine
 
-
 config = make_config()
 engine = make_engine(config)
-
 
 
 @click.group()

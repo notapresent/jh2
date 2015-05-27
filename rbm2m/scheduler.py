@@ -6,8 +6,8 @@ from rq import Queue
 from .models import Record, Scan, ScanRecord, Image
 from . import scraper
 
-
 JOB_TIMEOUT = 300
+
 
 class Scheduler(object):
     def __init__(self, session, redis, queue_name):
@@ -95,8 +95,7 @@ class Scheduler(object):
         self.session.commit()
 
         for rec_id in fetch_images:
-            self.queue.enqueue('rbm2m.worker.get_images',
-                               rec_id,
+            self.queue.enqueue('rbm2m.worker.get_images', rec_id,
                                timeout=300,
                                at_front=True)
 

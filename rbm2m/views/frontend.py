@@ -3,7 +3,6 @@ from flask import render_template, abort, url_for, Blueprint, current_app
 
 from .. import webapp
 
-
 bp = Blueprint('frontend', __name__)
 
 

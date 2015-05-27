@@ -8,7 +8,6 @@ from flask.ext.basicauth import BasicAuth
 from flask.ext.redis import FlaskRedis
 from flask.ext.sqlalchemy import SQLAlchemy
 
-
 db = SQLAlchemy()
 basic_auth = BasicAuth()
 redis = FlaskRedis()

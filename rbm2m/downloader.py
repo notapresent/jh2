@@ -3,12 +3,11 @@ import urllib
 
 import requests
 
-
 HOST = 'http://www.recordsbymail.com/'
 GENRE_LIST_URL = '{host}browse.php'.format(host=HOST)
 SEARCH_URL = '{host}search.php?genre={genre_slug}&format=LP&instock=1'
 IMAGE_LIST_URL = '{host}php/getImageArray.php?item={rec_id}'
-TIMEOUTS = (3.05, 30)   # Connect, read # TODO
+TIMEOUTS = (3.05, 30)  # Connect, read # TODO
 
 
 def fetch(url):
@@ -43,7 +42,8 @@ def get_results_page(genre_title, page):
     """
         Download search result page
     """
-    url = SEARCH_URL.format(host=HOST, genre_slug=urllib.quote_plus(genre_title))
+    url = SEARCH_URL.format(host=HOST,
+                            genre_slug=urllib.quote_plus(genre_title))
 
     if page:
         url = url + '&page={}'.format(page)

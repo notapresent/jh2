@@ -10,4 +10,3 @@ class Image(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     record_id = Column(Integer, ForeignKey('records.id'), nullable=False)
     source_url = Column(String(512), nullable=False)
-

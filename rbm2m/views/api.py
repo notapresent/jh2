@@ -6,7 +6,6 @@ from ..models import Scan
 from rbm2m import scheduler
 from ..helpers import get_stats
 
-
 bp = Blueprint('api', __name__)
 
 
