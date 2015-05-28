@@ -97,7 +97,7 @@ class Builder(object):
                 .filter(scan_records.c.scan_id.in_(scan_ids))
                 .filter(or_(
                     RecordFlag.name.is_(None),
-                    ~RecordFlag.name.in_(['sold', 'skip'])))
+                    ~RecordFlag.name.in_(['skip', 'missing_images'])))
                 .order_by(scan_records.c.record_id)
                 .group_by(scan_records.c.record_id)
                 .offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all())
