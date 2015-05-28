@@ -2,9 +2,9 @@
 from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
-from ..models import Scan, Genre
+from ..models import Genre
 from rbm2m import scheduler
-from ..helpers import get_stats
+from ..actions import stats
 
 bp = Blueprint('api', __name__)
 
@@ -16,10 +16,10 @@ def check_auth():
 
 
 @bp.route('/stats')
-def status():
-    stats = get_stats(db.session)
-    scans = db.session.query(Scan).order_by(-Scan.started_at).limit(5).all()
-    return jsonify({'stats': stats, 'scans': scans})
+def get_stats():
+    overview = stats.get_overview(db.session)
+    scans = stats.active_scans(db.session)
+    return jsonify({'stats': overview, 'scans': scans})
 
 
 @bp.route('/run_scan/<int:genre_id>')

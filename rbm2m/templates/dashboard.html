@@ -6,12 +6,12 @@
         <h3>Состояние</h3>
 
         <ul class="small-block-grid-6 status text-center">
-            <li><div><h4>123456</h4><span>Записей</span></div></li>
-            <li><div><h4>12345</h4><span>В наличии</span></div></li>
-            <li><div><h4>234567</h4><span>Картинок</span></div></li>
-            <li><div><h4>34.5</h4><span>Гигабайт</span></div></li>
-            <li><div><h4>4321</h4><span>Лотов</span></div></li>
-            <li><div><h4>7</h4><span>Ошибок</span></div></li>
+            <li><div><h4 id="status-records_total">-</h4><span>Записей</span></div></li>
+            <li><div><h4 id="status-records_in_stock">-</h4><span>В наличии</span></div></li>
+            <li><div><h4 id="status-images_total">-</h4><span>Картинок</span></div></li>
+            <li><div><h4 id="status-images_total_length">-</h4><span>Гигабайт</span></div></li>
+            <li><div><h4 id="status-lots">-</h4><span>Лотов</span></div></li>
+            <li><div><h4 id="status-errors">-</h4><span>Ошибок</span></div></li>
 
 
         </ul>
@@ -21,21 +21,24 @@
     <div class="large-12 columns">
         <h3>Сканы</h3>
         <ul class="scans">
-            <li class="scan">
+
+            <li class="scan" id="scan-template">
                 <h1 class="icon"><i class="fi-download"></i></h1>
                 <h4>Rock &amp; Pop</h4>
 
                 <div class="right scanstats text-right">
-                    <span>150 страниц из 900</span>
+                    <span><span class="items-current">-</span> записей из
+                        <span class="items-total">-</span></span>
                     <br>
-                    <span class="success">~ 2 часа 30 минут</span>
+                    <span>Прошло <span  class="time-elapsed">-</span>
+                        осталось <span  class="time-left">-</span></span>
                     <br>
-                    <span class="success">Работает</span>
+                    <span class="rps">-</span> записей/сек</span>
 
                 </div>
 
                 <div class="progress">
-                    <span class="meter" style="width: 20%"></span>
+                    <span class="meter" style="width: 0%"></span>
                 </div>
 
             </li>
@@ -45,4 +48,87 @@
 </div>
 
 
+{% endblock %}
+
+{% block footer %}
+<script>
+    function format_time(sec_num) {
+        var hours   = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+        if (hours   < 10) {hours   = "0"+hours;}
+        if (minutes < 10) {minutes = "0"+minutes;}
+        if (seconds < 10) {seconds = "0"+seconds;}
+        var time    = hours + ':' + minutes + ':' + Math.round(seconds);
+        return time;
+    }
+
+    function format_size(size) {
+        if(size == null) {
+            size = 0;
+        }
+        return (size/1000000).toFixed(2);
+    }
+
+    function display_status(data, status) {
+        for(var key in data['stats']) {
+
+            if(key == 'images_total_length') {
+                data['stats'][key] = format_size(data['stats'][key]);
+            }
+            $('h4#status-' + key).html(data['stats'][key]);
+        }
+
+
+        scan_ids = Array();
+
+        data['scans'].forEach(function(scan, i, scans) {
+            var id = 'scan-' + scan['id'];
+            scan_ids .push(id);
+            var li = $('ul.scans li#' + id);
+
+            if(!li.length) {
+                li = $('li#scan-template').clone().attr('id', id).appendTo('ul.scans');
+            }
+
+            if(scan['num_records'] > 0) {
+                var progress = scan['num_records'] / scan['est_num_records'] * 100;
+                var sec_elapsed = (new Date() - new Date(scan['started_at'])) / 1000;
+                var records_per_sec = scan['num_records'] / sec_elapsed;
+                var sec_left =  (scan['est_num_records'] - scan['num_records']) / records_per_sec;
+            } else {
+                var progress = 0;
+                var sec_left = 0;
+                var sec_elapsed= 0;
+            }
+
+            $(li).find('h4').html(scan['title']);
+            $(li).find('span.items-current').html(scan['num_records']);
+            $(li).find('span.items-total').html(scan['est_num_records']);
+            $(li).find('span.meter').attr('style', 'width: ' + progress + '%;');
+            $(li).find('span.time-elapsed').html(format_time(sec_elapsed));
+            $(li).find('span.time-left').html(format_time(sec_left));
+            $(li).find('span.rps').html(records_per_sec.toFixed(1));
+
+        });
+
+        $('ul.scans li.scan').each(function(){
+            var elem = $(this);
+            if(scan_ids.indexOf(elem.attr('id')) == -1 && elem.attr('id') != 'scan-template') {
+                elem.remove();
+            }
+        });
+    }
+
+    function update_status() {
+        $.getJSON("{{ url_for('api.get_stats') }}",{}, display_status);
+    }
+
+
+    $(function (){
+        update_status();
+        var refreshId = setInterval(update_status, 2000);
+    });
+</script>
 {% endblock %}

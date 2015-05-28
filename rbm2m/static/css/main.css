@@ -44,6 +44,10 @@ h1.icon, li.scan h4 {
     margin-left: .25em;
 }
 
+li#scan-template {
+    display: none;
+}
+
 .scanstats {
     font-size: small;
 }

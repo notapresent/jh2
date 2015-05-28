@@ -65,12 +65,19 @@ class Builder(object):
             export-enabled genre
         """
         subquery = (
-            self.session.query(Scan.id).filter(Scan.status == 'success')
-            .filter(Scan.genre_id == Genre.id).order_by(Scan.started_at.desc())
-            .limit(1).as_scalar())
+            self.session.query(Scan.id)
+                .filter(Scan.status == 'success')
+                .filter(Scan.genre_id == Genre.id)
+                .order_by(Scan.started_at.desc())
+                .limit(1)
+                .as_scalar()
+        )
         rows = (
-            self.session.query(Genre.id, subquery).filter(subquery.isnot(None))
-            .all())
+            self.session.query(Genre.id, subquery)
+                .filter(subquery.isnot(None))
+                .filter(Genre.export_enabled.is_(True))
+                .all()
+        )
         return [scan_id for genre_id, scan_id in rows]
 
     def records(self, scan_ids):

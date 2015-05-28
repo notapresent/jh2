@@ -15,7 +15,6 @@ def yml():
         'genres': yml_builder.genres_list(),
         'offers': yml_builder.offers()
     }
-    print request
     return render_template('yml.xml', **ctx)
 
 

@@ -3,14 +3,12 @@ import os
 import time
 from functools import wraps
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine
 from sqlalchemy.ext import compiler
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import expression
 
 from . import config
-from models.record import Record
-from models.image import Image
 
 
 def make_engine(cfg=None):
@@ -38,19 +36,6 @@ def make_config(app_env=None):
     if app_env is None:
         app_env = os.environ.get('RBM2M_ENV', 'Production')
     return getattr(config, '{}Config'.format(app_env))
-
-
-def get_stats(session):
-    return {
-        'records_total': session.query(func.count(Record.id)).scalar(),
-        # Number of records in last successful crawl for each genre
-        'records_in_stock': -1,
-        'images_total': session.query(func.count(Image.id)).scalar(),
-        # Number of records in last successful crawl for each exported genre
-        'lots': -1,
-        # number of failed crawls, at most one for each genre
-        'errors': -1
-    }
 
 
 def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
