@@ -16,12 +16,14 @@ def fetch(url):
 
         Raises `DownloadError` if operation fails
     """
+    resp = False
     try:
         resp = requests.get(url, timeout=TIMEOUTS)
         resp.raise_for_status()
     except requests.RequestException as e:
-        if resp.text:
-            with open('dump.html', 'w') as f:
+        if resp and resp.text:
+            filename = urllib.quote_plus(url)
+            with open(filename, 'w') as f:
                 f.write(resp.text)
         print "Failed url: {}".format(url)
         raise DownloadError(e)

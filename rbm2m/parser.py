@@ -48,8 +48,14 @@ def extract_records(soup):
 
 
 def parse_record_block(tag):
-    rec_id = int(tag.attrs['id'])
+    """
+        Parse tag containing record and return parsed values as a dict
+
+        :param tag: BeautifulSoup tag
+        :return: dict
+    """
     rec = {
+        'id': int(tag.attrs['id']),
         'artist': extract_artist(tag),
         'title': extract_title(tag),
         'label': extract_label(tag),
@@ -59,7 +65,7 @@ def parse_record_block(tag):
         'format': extract_format(tag),
         'has_images': has_images(tag)
     }
-    return rec_id, rec
+    return rec
 
 
 def has_images(tag):
@@ -85,6 +91,7 @@ def extract_grade(tag):
 
 def extract_price(tag):
     price_text = tag.find('span', class_='price').text
+    price_text = price_text.replace(',', '')
     return int(price_text.strip('$'))
 
 

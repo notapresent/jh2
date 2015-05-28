@@ -3,10 +3,11 @@ import datetime
 
 from rq import Queue
 
-from .models import Record, Scan, ScanRecord, Image
+from .models import Record, Scan, Image
 from . import scraper
 
 JOB_TIMEOUT = 300
+RESULT_TIMEOUT = 0
 
 
 class Scheduler(object):
@@ -52,7 +53,7 @@ class Scheduler(object):
             return
 
         try:
-            records, next_page, rec_count = scraper.scrape_page(
+            record_dicts, next_page, rec_count = scraper.scrape_page(
                 scan.genre.title, page)
         except scraper.ScrapeError as e:
             print "*** Scan #{} failed: {}".format(scan_id, e)
@@ -61,45 +62,42 @@ class Scheduler(object):
 
         # Update estimated records count every 10 pages
         if page % 10 == 0:
-            self.session.query(Scan).filter_by(id=scan_id) \
-                .update({Scan.num_records: rec_count})
+            scan.est_num_records = rec_count
 
-        # records: [(id, {values}), ...]
-        record_ids = [rid for rid, rec in records]
+        record_ids = [rec['id'] for rec in record_dicts]
         existing_records = (
-            self.session.query(Record.id).filter(Record.id.in_(record_ids))
-            .all())
-        existing_ids = [rec_id for (rec_id, ) in existing_records]
+            self.session.query(Record)
+                .filter(Record.id.in_(record_ids))
+                .all()
+        )
 
+        for rec in existing_records:
+            scan.records.append(rec)
+
+        existing_ids = [rec.id for rec in existing_records]
         fetch_images = []
-        for rec_id, rec in records:
-            if rec_id in existing_ids:
+
+        for rec in record_dicts:
+            if rec['id'] in existing_ids:
                 continue
 
             has_images = rec.pop('has_images')
             if has_images:
-                fetch_images.append(rec_id)
+                fetch_images.append(rec['id'])
 
             record = Record(**rec)
-            record.id = rec_id
-            record.import_date = datetime.datetime.utcnow()
             record.genre_id = scan.genre_id
-            self.session.add(record)
-
-        self.session.flush()
-
-        for rec_id in record_ids:
-            self.session.add(ScanRecord(scan_id=scan_id, record_id=rec_id))
+            scan.records.append(record)
 
         self.session.commit()
 
         for rec_id in fetch_images:
             self.queue.enqueue('rbm2m.worker.get_images', rec_id,
-                               timeout=300,
+                               timeout=JOB_TIMEOUT,
                                at_front=True)
 
         print "Scan #{} / page #{} - {} items, {} new".format(
-            scan_id, page, len(records), len(records) - len(existing_ids))
+            scan_id, page, len(record_dicts), len(record_dicts) - len(existing_ids))
 
         if next_page:
             self.queue.enqueue('rbm2m.worker.task', scan_id, next_page,

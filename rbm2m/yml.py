@@ -6,12 +6,12 @@ from sqlalchemy import func, or_
 from jinja2.filters import do_truncate
 
 from helpers import group_concat
-from models import Scan, Record, ScanRecord, Genre, RecordStatus, Image
+from models import Scan, Record, Genre, RecordFlag, Image, scan_records
 
 
 BATCH_SIZE = 10000
 
-# TODO move this to setings
+# TODO move this to settings
 PRICE_FORMULA = 'x*60 if x < 1000 else x*60 + 10'
 
 DESCRIPTION_TEMPLATE = '''
@@ -84,22 +84,22 @@ class Builder(object):
         batch_no = 0
         while True:
             records = (
-                self.session.query(
-                    ScanRecord.scan_id, Record.id, Record.artist, Record.title,
+                self.session.query(scan_records.c.record_id.label('id'),
+                    Record.artist, Record.title,
                     Record.label, Record.notes, Record.grade, Record.format,
                     Record.price, Genre.title.label('genre_title'),
                     func.group_concat(Image.source_url).label('images'))
-                .join(Record, Record.id == ScanRecord.record_id)
+                .join(Record, Record.id == scan_records.c.record_id)
                 .join(Genre, Genre.id == Record.genre_id)
-                .outerjoin(Image, Image.record_id == ScanRecord.record_id)
-                .outerjoin(RecordStatus,
-                           RecordStatus.record_id == ScanRecord.record_id)
-                .filter(ScanRecord.scan_id.in_(scan_ids))
+                .outerjoin(Image, Image.record_id == scan_records.c.record_id)
+                .outerjoin(RecordFlag,
+                           RecordFlag.record_id == scan_records.c.record_id)
+                .filter(scan_records.c.scan_id.in_(scan_ids))
                 .filter(or_(
-                    RecordStatus.status.is_(None),
-                    ~RecordStatus.status.in_(['sold', 'skip'])))
-                .order_by(ScanRecord.record_id)
-                .group_by(ScanRecord.record_id)
+                    RecordFlag.name.is_(None),
+                    ~RecordFlag.name.in_(['sold', 'skip'])))
+                .order_by(scan_records.c.record_id)
+                .group_by(scan_records.c.record_id)
                 .offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all())
 
             if not records:

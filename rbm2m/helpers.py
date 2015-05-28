@@ -13,7 +13,10 @@ from models.record import Record
 from models.image import Image
 
 
-def make_engine(cfg):
+def make_engine(cfg=None):
+    if not cfg:
+        cfg = make_config()
+
     return create_engine(
         cfg.SQLALCHEMY_DATABASE_URI,
         echo=cfg.SQLALCHEMY_ECHO,  # client_encoding='utf8'    # TODO
@@ -21,6 +24,9 @@ def make_engine(cfg):
 
 
 def make_session(engine=None):
+    if not engine:
+        engine = make_engine()
+
     Session = sessionmaker(bind=engine)
     session = Session()
     # For Flask-SQLAlchemy models   # TODO DO we need it here?
