@@ -40,7 +40,11 @@ def get_overview(sess):
         lots.label('lots')
     ).one()
 
-    return dict(zip(row.keys(), row))
+    result = dict(zip(row.keys(), row))
+
+    result['images_total_length'] = int(result['images_total_length'])
+
+    return result
 
 
 def last_scans(sess):
