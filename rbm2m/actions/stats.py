@@ -11,6 +11,9 @@ def get_overview(sess):
     """
     last_scan_ids = [scan.id for scan in last_scans(sess)]
 
+    if not last_scan_ids:       # Append dummy ID to avoid SA warning
+        last_scan_ids = [-1]    # about IN-predicate with an empty sequence
+
     rec_instock = (
         sess.query(func.count(distinct(scan_records.c.record_id)))
         .filter(scan_records.c.scan_id.in_(last_scan_ids))
@@ -72,11 +75,11 @@ def active_scans(sess):
     )
     rows = (
         sess.query(Scan.id, Scan.started_at, Scan.est_num_records,
-            rec_count.label('num_records'), Genre.title)
-        .join(Genre, Genre.id == Scan.genre_id)
-        .filter(Scan.status == 'started')
-        .order_by(Scan.started_at)
-        .all()
+                   rec_count.label('num_records'), Genre.title)
+            .join(Genre, Genre.id == Scan.genre_id)
+            .filter(Scan.status == 'started')
+            .order_by(Scan.started_at)
+            .all()
     )
 
     scans = [dict(zip(r.keys(), r)) for r in rows]

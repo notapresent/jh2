@@ -65,11 +65,14 @@ class Scheduler(object):
             scan.est_num_records = rec_count
 
         record_ids = [rec['id'] for rec in record_dicts if rec['success']]
-        existing_records = (
-            self.session.query(Record)
-                .filter(Record.id.in_(record_ids))
-                .all()
-        )
+        if record_ids:
+            existing_records = (
+                self.session.query(Record)
+                    .filter(Record.id.in_(record_ids))
+                    .all()
+            )
+        else:
+            existing_records = []
 
         for rec in existing_records:
             scan.records.append(rec)

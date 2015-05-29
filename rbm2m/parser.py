@@ -10,6 +10,16 @@ import bs4
 
 from rbm2m.util import to_unicode
 
+DUMP_TEMPLATE = '''Exeption: {}
+Message: {}
+
+Traceback:
+{}
+
+Additional notes:
+{}
+'''
+
 
 def parse_genres(html):
     soup = bs4.BeautifulSoup(html)
@@ -165,24 +175,16 @@ def dump_filename(name):
         Make timestamped filename for error dump
     """
     timestamp = datetime.datetime.utcnow().strftime('%d-%m-%Y %H:%M:%S')
-    slug = urllib.quote_plus(name)
+    slug = urllib.quote_plus(str(name))
     return "{} {}.hmtl".format(timestamp, slug)
 
 
-def dump_exception(exc_type, exc_val, tb, add=None):
+def dump_exception(exc_type, exc_val, tb, notes=None):
     """
         Dumps exception info along with additional notes
     """
     filename = dump_filename(exc_type)
-    tmpl = '''Exeption: {}
-    Message: {}
-
-    Traceback:
-    {}
-
-    Additional:
-    {}
-    '''
-    dump = tmpl.format(exc_type, exc_val, traceback.format_exc(tb), add or '')
+    dump = DUMP_TEMPLATE.format(exc_type, exc_val, traceback.format_exc(tb),
+                                notes or '')
     with open(filename, 'w') as f:
         f.write(dump)
