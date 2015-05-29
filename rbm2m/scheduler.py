@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import datetime
+import os
 
 from rq import Queue
 
 from .models import Record, Scan, Image
-from . import scraper
+from rbm2m.action import scraper, downloader
 
 JOB_TIMEOUT = 300
 RESULT_TIMEOUT = 0
-
+DATA_DIR = './images'
 
 class Scheduler(object):
     def __init__(self, session, redis, queue_name):
@@ -98,8 +99,8 @@ class Scheduler(object):
 
         self.session.commit()
 
-        for rec_id in fetch_images:
-            self.queue.enqueue('rbm2m.worker.get_images', rec_id,
+        if fetch_images:
+            self.queue.enqueue('rbm2m.worker.get_images', fetch_images,
                                timeout=JOB_TIMEOUT,
                                at_front=True)
 
@@ -112,14 +113,29 @@ class Scheduler(object):
         else:
             self.queue.enqueue('rbm2m.worker.finish_scan', scan_id, 'success')
 
-    def get_images(self, rec_id):
-        urls = scraper.image_list(rec_id)
-
-        for img_url in urls:
-            self.session.add(Image(record_id=rec_id, source_url=img_url))
-
+    def get_images(self, rec_ids):
+        """
+            Download and save images for records
+        """
+        images = []
+        for rec_id, urls in scraper.get_image_urls(rec_ids):
+            for url in urls:
+                img = Image(record_id=rec_id, source_url=url)
+                images.append(img)
+                self.session.add(img)
         self.session.commit()
-        print "Added {} images for record #{}".format(len(urls), rec_id)
+        ids = [img.id for img in images]
+        urls = [img.source_url for img in images]
+        paths = [make_image_path(img.id) for img in images]
+        result = downloader.download_and_save_images(ids, urls, paths)
+        for img_id, length in result:
+            if length:
+                img = self.session.query(Image).get(img_id)
+                img.length = length
+                self.session.add(img)
+        self.session.commit()
+
+        print "Added {} images".format(len(images))
 
 
 class SchedulerError(Exception):
@@ -128,3 +144,27 @@ class SchedulerError(Exception):
 
 class AlreadyStarted(SchedulerError):
     pass
+
+
+def make_image_filename(img_id):
+    strid = str(img_id).zfill(6)
+    frags = [strid[i:i+2] for i in range(0, len(strid), 2)]
+    frags.append("{}.jpg".format(img_id))
+    return os.path.join(*frags)
+
+def make_image_path(img_id):
+    fn = make_image_filename(img_id)
+    file_path = os.path.realpath(os.path.join(DATA_DIR, fn))
+    dirname = os.path.dirname(file_path)
+
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+    return file_path
+
+
+def save_image(img_id, content):
+    fn = make_image_filename(img_id)
+    file_path = make_image_path(fn)
+
+    with open(file_path, 'wb') as f:
+        f.write(content)

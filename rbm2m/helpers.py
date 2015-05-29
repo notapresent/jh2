@@ -3,10 +3,12 @@ import os
 import time
 from functools import wraps
 
+from redis import StrictRedis
 from sqlalchemy import create_engine
 from sqlalchemy.ext import compiler
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import expression
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import config
 
@@ -21,14 +23,14 @@ def make_engine(cfg=None):
     )
 
 
-def make_session(engine=None):
+def make_session(engine=None, config=None):
     if not engine:
-        engine = make_engine()
+        engine = make_engine(config)
 
     Session = sessionmaker(bind=engine)
     session = Session()
     # For Flask-SQLAlchemy models   # TODO DO we need it here?
-    session._model_changes = {}
+    # session._model_changes = {}
     return session
 
 
@@ -36,6 +38,11 @@ def make_config(app_env=None):
     if app_env is None:
         app_env = os.environ.get('RBM2M_ENV', 'Production')
     return getattr(config, '{}Config'.format(app_env))
+
+
+def make_redis(redis_url):
+    return StrictRedis.from_url(redis_url)
+
 
 
 def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
@@ -97,3 +104,20 @@ def _group_concat_mysql(element, compilr, **kw):
 
     return 'GROUP_CONCAT(%s SEPARATOR %s)'.format(
         compilr.process(element.clauses.clauses[0]), separator, )
+
+
+def run_job(job, *args, **kwargs):
+    job.config = make_config()
+    session = make_session()
+    job.session = session
+
+    try:
+        job.run(*args, **kwargs)
+    except SQLAlchemyError:
+        session.rollback()
+    else:
+        session.commit()
+    finally:
+        session.close()
+
+

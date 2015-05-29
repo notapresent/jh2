@@ -1,32 +1,19 @@
 # -*- coding: utf-8 -*-
+"""
+    Task entry points
+"""
 from redis import StrictRedis
 
-from rbm2m.scheduler import Scheduler
+from rbm2m.action import taskman
 from rbm2m.helpers import make_session, make_config, make_engine
 
-config = make_config()
-session = make_session(engine=make_engine(config))
-redis_conn = StrictRedis.from_url(config.REDIS_URL)
 
-scheduler = Scheduler(session, redis_conn, config.RQ_QUEUE_NAME)
+def run_task(task_name, *args, **kwargs):
+    config = make_config()
+    session = make_session(engine=make_engine(config))
+    redis_conn = StrictRedis.from_url(config.REDIS_URL)
 
+    tm = taskman.TaskManager(config=config, session=session, redis=redis_conn)
 
-# TODO: Refactor this atrocity
-def start_scan(genre_id):
-    scheduler.start_scan(genre_id)
-
-
-def finish_scan(scan_id, status):
-    scheduler.finish_scan(scan_id, status)
-
-
-def task(scan_id, page=0):
-    scheduler.run_task(scan_id, page)
-
-
-def abort_scan(scan_id):
-    scheduler.abort_scan(scan_id)
-
-
-def get_images(rec_id):
-    scheduler.get_images(rec_id)
+    # TODO scoped session with commit/rollback here
+    tm.run_task(task_name, *args, **kwargs)

@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, current_app, request
 from ..webapp import db, redis, basic_auth
 from ..models import Genre
 from rbm2m import scheduler
-from ..actions import stats
+from ..action import stats
 
 bp = Blueprint('api', __name__)
 

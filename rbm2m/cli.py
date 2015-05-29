@@ -4,7 +4,7 @@ from redis import StrictRedis
 
 from rbm2m.models.base import Base
 from .models import Genre
-from . import scraper
+from rbm2m.action import scraper
 from helpers import make_session, make_config, make_engine
 
 config = make_config()
@@ -42,6 +42,7 @@ def import_genres():
     """
         Import genres from rbm and save in DB
     """
+    # TODO move to action layer
     session = make_session(engine)
     for genre_title in scraper.genre_list():
         session.add(Genre(title=genre_title))
