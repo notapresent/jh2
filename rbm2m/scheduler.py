@@ -64,7 +64,7 @@ class Scheduler(object):
         if page % 10 == 0:
             scan.est_num_records = rec_count
 
-        record_ids = [rec['id'] for rec in record_dicts]
+        record_ids = [rec['id'] for rec in record_dicts if rec['success']]
         existing_records = (
             self.session.query(Record)
                 .filter(Record.id.in_(record_ids))
@@ -79,6 +79,10 @@ class Scheduler(object):
 
         for rec in record_dicts:
             if rec['id'] in existing_ids:
+                continue
+
+            success = rec.pop('success')
+            if not success:
                 continue
 
             has_images = rec.pop('has_images')

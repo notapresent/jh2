@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import sys
 import urlparse
-from HTMLParser import HTMLParseError
+import datetime
+import traceback
+import urllib
 import json
 
 import bs4
@@ -14,7 +17,7 @@ def parse_genres(html):
     items = div.ul.find_all('li')
 
     for item in items:
-        yield to_unicode(item.a.text).strip()
+        yield to_unicode(item.a.text).strip().strip(';')
 
 
 def parse_page(html):
@@ -25,7 +28,9 @@ def parse_page(html):
         total_count = extract_total_count(soup)
 
     # TODO need to handle other errors here
-    except HTMLParseError as e:
+    except Exception as e:
+        exc_type, exc_val, tb = sys.exc_info()
+        dump_exception(exc_type, exc_val, tb, html)
         raise ParseError(e)
 
     else:
@@ -40,11 +45,20 @@ def parse_image_list(json_data):
 
 
 def extract_records(soup):
+    """
+        Extract records from search page result, represented by BS object
+        Yields parsed records as dicts or dummy dict in case of error
+    """
     container = soup.find('ul', id='records-list')
     items = container.find_all('li', class_='record-block')
 
     for item in items:
-        yield parse_record_block(item)
+        try:
+            yield parse_record_block(item)
+        except RecordParseFailed:
+            exc_type, exc_val, tb = sys.exc_info()
+            dump_exception(exc_type, exc_val, tb, str(item))
+            yield {'id': None, 'success': False}
 
 
 def parse_record_block(tag):
@@ -54,18 +68,23 @@ def parse_record_block(tag):
         :param tag: BeautifulSoup tag
         :return: dict
     """
-    rec = {
-        'id': int(tag.attrs['id']),
-        'artist': extract_artist(tag),
-        'title': extract_title(tag),
-        'label': extract_label(tag),
-        'notes': extract_notes(tag),
-        'grade': extract_grade(tag),
-        'price': extract_price(tag),
-        'format': extract_format(tag),
-        'has_images': has_images(tag)
-    }
-    return rec
+    try:
+        rec = {
+            'id': int(tag.attrs['id']),
+            'artist': extract_artist(tag),
+            'title': extract_title(tag),
+            'label': extract_label(tag),
+            'notes': extract_notes(tag),
+            'grade': extract_grade(tag),
+            'price': extract_price(tag),
+            'format': extract_format(tag),
+            'has_images': has_images(tag),
+            'success': True  # Special field indicating successful parse
+        }
+    except Exception as e:
+        raise RecordParseFailed(str(e))
+    else:
+        return rec
 
 
 def has_images(tag):
@@ -130,6 +149,40 @@ def extract_total_count(soup):
 
 class ParseError(Exception):
     """
-    Raised for all parse errors.
+        Raised for all parse errors.
     """
     pass
+
+class RecordParseFailed(ParseError):
+    """
+        Raised if parsing particular record failed
+    """
+    pass
+
+
+def dump_filename(name):
+    """
+        Make timestamped filename for error dump
+    """
+    timestamp = datetime.datetime.utcnow().strftime('%d-%m-%Y %H:%M:%S')
+    slug = urllib.quote_plus(name)
+    return "{} {}.hmtl".format(timestamp, slug)
+
+
+def dump_exception(exc_type, exc_val, tb, add=None):
+    """
+        Dumps exception info along with additional notes
+    """
+    filename = dump_filename(exc_type)
+    tmpl = '''Exeption: {}
+    Message: {}
+
+    Traceback:
+    {}
+
+    Additional:
+    {}
+    '''
+    dump = tmpl.format(exc_type, exc_val, traceback.format_exc(tb), add or '')
+    with open(filename, 'w') as f:
+        f.write(dump)
