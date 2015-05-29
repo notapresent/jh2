@@ -9,8 +9,8 @@ from .base import Base
 scan_records = Table(
     'scan_records',
     Base.metadata,
-    Column('scan_id', Integer, ForeignKey('scans.id')),
-    Column('record_id', Integer, ForeignKey('records.id'))
+    Column('scan_id', Integer, ForeignKey('scans.id'), primary_key=True),
+    Column('record_id', Integer, ForeignKey('records.id'), primary_key=True)
 )
 
 
