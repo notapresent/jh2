@@ -21,9 +21,8 @@ def create_app(app_env):
     basic_auth.init_app(app)
     redis.init_app(app, strict=True)
 
-    # TODO rename `frontend` to `manage`
-    from rbm2m.views import frontend, api, public
-    app.register_blueprint(frontend.bp)
+    from rbm2m.views import manage, api, public
+    app.register_blueprint(manage.bp)
     app.register_blueprint(api.bp, url_prefix='/api')
     app.register_blueprint(public.bp, url_prefix='/public')
     return app
