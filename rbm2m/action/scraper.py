@@ -64,5 +64,3 @@ def get_image_urls(rec_ids):
         Download image urls for all records in rec_ids
     """
     pass
-
-

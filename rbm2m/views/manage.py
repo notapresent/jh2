@@ -22,5 +22,3 @@ def home():
 def genre_list():
     genres = db.session.query(Genre).order_by(Genre.id).all()
     return render_template('genre_list.html', genres=genres)
-
-

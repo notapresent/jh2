@@ -66,6 +66,7 @@ def last_scans(sess):
     )
     return rows
 
+
 def active_scans(sess):
     """
         Returns list of scans currently in progress, along with

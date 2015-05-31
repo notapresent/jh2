@@ -22,6 +22,7 @@ def get_stats():
     scans = stats.active_scans(db.session)
     return jsonify({'stats': overview, 'scans': scans})
 
+
 @bp.route('/run_scan/<int:genre_id>')
 def run_scan(genre_id):
     sc = scanner.Scanner(current_app.config, db.session, redis)

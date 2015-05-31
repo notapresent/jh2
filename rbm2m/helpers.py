@@ -42,7 +42,6 @@ def make_redis(redis_url):
     return StrictRedis.from_url(redis_url)
 
 
-
 def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
     """Retry calling the decorated function using an exponential backoff.
 
@@ -117,5 +116,3 @@ def run_job(job, *args, **kwargs):
         session.commit()
     finally:
         session.close()
-
-

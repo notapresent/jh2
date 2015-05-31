@@ -80,7 +80,6 @@ class RecordImporter(object):
             self.scan.est_num_records = rec_count
 
 
-
 class RecordImportError(Exception):
     """
         Unrecoverable record import error

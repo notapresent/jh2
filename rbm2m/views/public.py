@@ -21,4 +21,3 @@ def yml():
 @bp.route('/table')
 def table():
     raise NotImplementedError()
-

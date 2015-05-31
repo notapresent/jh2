@@ -163,6 +163,7 @@ class ParseError(Exception):
     """
     pass
 
+
 class RecordParseFailed(ParseError):
     """
         Raised if parsing particular record failed

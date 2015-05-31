@@ -40,7 +40,6 @@ def fetch_text(url):
     return fetch(url).text
 
 
-
 def genre_list():
     """
         Download page with the list of genres

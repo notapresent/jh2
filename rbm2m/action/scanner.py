@@ -111,4 +111,3 @@ class Scanner(object):
         """
         imp = image_importer.ImageImporter(self.config, self.session)
         imp.run(rec_ids)
-

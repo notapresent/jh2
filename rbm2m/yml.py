@@ -91,7 +91,8 @@ class Builder(object):
         batch_no = 0
         while True:
             records = (
-                self.session.query(scan_records.c.record_id.label('id'),
+                self.session.query(
+                    scan_records.c.record_id.label('id'),
                     Record.artist, Record.title,
                     Record.label, Record.notes, Record.grade, Record.format,
                     Record.price, Genre.title.label('genre_title'),
