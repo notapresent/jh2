@@ -19,7 +19,7 @@ def make_engine(cfg=None):
 
     return create_engine(
         cfg.SQLALCHEMY_DATABASE_URI,
-        echo=cfg.SQLALCHEMY_ECHO,  # client_encoding='utf8'    # TODO
+        echo=cfg.SQLALCHEMY_ECHO,
     )
 
 
@@ -29,8 +29,6 @@ def make_session(engine=None, config=None):
 
     Session = sessionmaker(bind=engine)
     session = Session()
-    # For Flask-SQLAlchemy models   # TODO DO we need it here?
-    # session._model_changes = {}
     return session
 
 

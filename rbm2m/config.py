@@ -17,7 +17,6 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    # TODO: ?charset=utf8
     SQLALCHEMY_DATABASE_URI = os.environ.get('RBM2M_DATABASE_URI')
     REDIS_URL = os.environ.get('RBM2M_REDIS_URI')
 
