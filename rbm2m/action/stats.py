@@ -2,7 +2,7 @@
 from sqlalchemy import func, distinct
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import literal
-from ..models import Record, Image, Scan, Genre, scan_records
+from rbm2m.models import Record, Image, Scan, Genre, scan_records
 
 
 def get_overview(sess):

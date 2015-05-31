@@ -2,18 +2,25 @@
 """
     Task entry points
 """
-from redis import StrictRedis
+from sqlalchemy.exc import SQLAlchemyError
+from action import scanner
+from helpers import make_config, make_session, make_redis
 
-from rbm2m.action import taskman
-from rbm2m.helpers import make_session, make_config, make_engine
+
+config = make_config()
+sess = make_session(config)
+redis = make_redis(config)
+scanner = scanner.Scanner(config, sess, redis)
 
 
 def run_task(task_name, *args, **kwargs):
-    config = make_config()
-    session = make_session(engine=make_engine(config))
-    redis_conn = StrictRedis.from_url(config.REDIS_URL)
 
-    tm = taskman.TaskManager(config=config, session=session, redis=redis_conn)
-
-    # TODO scoped session with commit/rollback here
-    tm.run_task(task_name, *args, **kwargs)
+    method = getattr(scanner, task_name)
+    try:
+        method(*args, **kwargs)
+    except SQLAlchemyError as e:
+        sess.rollback()
+    else:
+        sess.commit()
+    finally:
+        sess.close()

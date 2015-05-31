@@ -1,43 +1,49 @@
 # -*- coding: utf-8 -*-
 from rbm2m.helpers import retry
-from rbm2m.action import parser, downloader
+import rbm_parser
+import downloader
 
 
 class ScrapeError(Exception):
     """
-    Raised if scraping failed for any reason (after all retries)
+        Raised if scraping failed for any reason (after all retries)
     """
     pass
 
 
-@retry(ScrapeError, tries=4, delay=30, backoff=2)
-def scrape_page(genre_title, page):
+class Scrape(object):
     """
-    Download search results page and extract records, total number of records
-    and next page
+        Represents one page scrape operation
+    """
+    def __init__(self):
+        self.records = []
+        self.next_page = None
+        self.rec_count = None
 
-    :param genre_title:
-    :param page:
-    :return: tuple (records, total_record_count, next_page)
-    """
-    try:
-        html = downloader.get_results_page(genre_title, page)
-        return parser.parse_page(html)
-    except (downloader.DownloadError, parser.ParseError) as e:
-        raise ScrapeError(str(e))
+    @retry(ScrapeError, tries=4, delay=30, backoff=2)
+    def run(self, genre_title, page):
+        """
+            Download search results page and extract records, total number of
+            records and next page
+        """
+        try:
+            html = downloader.get_results_page(genre_title, page)
+            rv = rbm_parser.parse_page(html)
+        except (downloader.DownloadError, rbm_parser.ParseError) as e:
+            raise ScrapeError(str(e))
+        else:
+            self.records, self.next_page, self.rec_count = rv
 
 
 @retry(ScrapeError, tries=2, delay=5)
 def genre_list():
     """
-    Downloads genre list from site, parses it and returns list of genre titles
-
-    :returns list of genre titles
+        Download and parse genre list rom rbm
     """
     try:
         html = downloader.genre_list()
-        return parser.parse_genres(html)
-    except (downloader.DownloadError, parser.ParseError) as e:
+        return rbm_parser.parse_genres(html)
+    except (downloader.DownloadError, rbm_parser.ParseError) as e:
         raise ScrapeError(str(e))
 
 
@@ -47,9 +53,9 @@ def image_list(rec_id):
         Downloads list of images for a record
     """
     try:
-        json = downloader.get_image_list(rec_id)
-        return parser.parse_image_list(json)
-    except (downloader.DownloadError, parser.ParseError) as e:
+        json_data = downloader.get_image_list(rec_id)
+        return rbm_parser.parse_image_list(json_data)
+    except (downloader.DownloadError, rbm_parser.ParseError) as e:
         raise ScrapeError(str(e))
 
 
