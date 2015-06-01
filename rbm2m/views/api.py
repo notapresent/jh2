@@ -7,6 +7,18 @@ from ..action import stats, scanner
 
 bp = Blueprint('api', __name__)
 
+def jsonified_route():
+    pass
+
+def route(self, rule, **options):
+    """Like :meth:`Flask.route` but for a blueprint.  The endpoint for the
+    :func:`url_for` function is prefixed with the name of the blueprint.
+    """
+    def decorator(f):
+        endpoint = options.pop("endpoint", f.__name__)
+        self.add_url_rule(rule, endpoint, f, **options)
+        return f
+    return decorator
 
 @bp.before_request
 def check_auth():
@@ -15,6 +27,7 @@ def check_auth():
 
 
 # TODO auto-jsonify all responses from this blueprint
+# see https://github.com/mattupstate/overholt/blob/master/overholt/api/__init__.py#L36-L51
 
 @bp.route('/stats')
 def get_stats():
@@ -24,6 +37,7 @@ def get_stats():
 
 
 @bp.route('/run_scan/<int:genre_id>')
+@bp.route('/run_scan/', defaults={'genre_id': None})
 def run_scan(genre_id):
     sc = scanner.Scanner(current_app.config, db.session, redis)
     try:
@@ -35,7 +49,7 @@ def run_scan(genre_id):
 
 
 @bp.route('/abort_scan/<int:scan_id>')
-def abort_scan(scan_id):
+def abort_scan(scan_id=None):
     scn = scanner.Scanner(current_app.config, db.session, redis)
     try:
         scn.abort_scan(scan_id)

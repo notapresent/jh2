@@ -13,6 +13,7 @@
                 <th>Название</th>
                 <th>Импортировать</th>
                 <th>Экспортировать</th>
+                <th>Запустить скан</th>
             </tr>
             </thead>
             <tbody>
@@ -41,6 +42,11 @@
                         <label for="export-{{ genre.id}}"></label>
                     </div>
                 </td>
+                <td>
+                    <button class="run_scan" data-genre_id="{{ genre.id}}">
+                        Запустить
+                    </button>
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -60,8 +66,19 @@
             $.getJSON(
                 '{{ url_for("api.update_genre") }}',
                 {gid: gid, f: field, v: + this.checked},
-                function(){
+                function(data){
 
+                });
+        });
+
+        $('button.run_scan').click(function(){
+            var genre_id = $(this).data('genre_id');
+            $.getJSON(
+                '{{ url_for("api.run_scan") }}' + genre_id, {},
+                function(data) {
+                    if(!data['success']) {
+                        alert('Failed to start scan: ' + data['message']);
+                    }
                 });
         });
     });
