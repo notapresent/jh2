@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
 from ..models import Genre
-from ..action import stats, scanner
+from ..action import stats, scanner, record_manager, genre_manager
 
 bp = Blueprint('api', __name__)
 
@@ -64,12 +64,10 @@ def abort_scan(scan_id=None):
 
 @bp.route('/update_genre')
 def update_genre():
-    genre_id = request.args['gid']
+    genre_id = int(request.args['gid'])
     field = request.args['f']
     value = int(request.args['v'])
-
-    db.session.query(Genre) \
-        .filter_by(id=genre_id) \
-        .update({getattr(Genre, field): value})
-    db.session.commit()
+    genman = genre_manager.GenreManager(db.session)
+    genre = genman.get(genre_id)
+    setattr(genre, field, value)
     return jsonify({'success': True})

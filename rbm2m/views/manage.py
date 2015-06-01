@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, abort, url_for, Blueprint, current_app
 
+from ..action import record_manager, genre_manager
 from ..models import Genre
 from ..webapp import basic_auth, db
 
@@ -20,5 +21,8 @@ def home():
 
 @bp.route('/genre/')
 def genre_list():
-    genres = db.session.query(Genre).order_by(Genre.id).all()
+    genman = genre_manager.GenreManager(db.session)
+    genres = genman.all()
     return render_template('genre_list.html', genres=genres)
+
+

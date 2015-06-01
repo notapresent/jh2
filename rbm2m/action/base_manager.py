@@ -24,3 +24,9 @@ class BaseManager(object):
         self.session.add(obj)
         self.session.flush()
         return obj
+
+    def all(self):
+        """
+            Return all entities
+        """
+        return self.session.query(self.__model__).all()
