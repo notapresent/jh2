@@ -56,3 +56,5 @@ target/
 supervisord.conf
 
 .idea/
+
+images/

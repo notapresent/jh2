@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 class Config(object):
     """
@@ -14,7 +15,7 @@ class Config(object):
     SQLALCHEMY_ECHO = False
     BASIC_AUTH_USERNAME = os.environ['RBM2M_LOGIN']
     BASIC_AUTH_PASSWORD = os.environ['RBM2M_PASSWORD']
-
+    MEDIA_DIR = os.path.join(BASE_DIR, 'images')
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('RBM2M_DATABASE_URI')
