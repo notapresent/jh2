@@ -23,9 +23,9 @@ def make_engine(cfg=None):
     )
 
 
-def make_session(engine=None, config=None):
+def make_session(engine=None, cfg=None):
     if not engine:
-        engine = make_engine(config)
+        engine = make_engine(cfg)
 
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -101,18 +101,3 @@ def _group_concat_mysql(element, compilr, **kw):
 
     return 'GROUP_CONCAT(%s SEPARATOR %s)'.format(
         compilr.process(element.clauses.clauses[0]), separator, )
-
-
-def run_job(job, *args, **kwargs):
-    job.config = make_config()
-    session = make_session()
-    job.session = session
-
-    try:
-        job.run(*args, **kwargs)
-    except SQLAlchemyError:
-        session.rollback()
-    else:
-        session.commit()
-    finally:
-        session.close()
