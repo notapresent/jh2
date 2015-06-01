@@ -39,7 +39,7 @@ def get_stats():
 @bp.route('/run_scan/<int:genre_id>')
 @bp.route('/run_scan/', defaults={'genre_id': None})
 def run_scan(genre_id):
-    sc = scanner.Scanner(current_app.config, db.session, redis)
+    sc = scanner.Scanner(current_app.config, db.session, redis._redis_client)
     try:
         sc.enqueue_scan(genre_id)
     except scanner.ScanError as e:      # Scan already queued
