@@ -18,7 +18,7 @@ class Scanner(object):
     """
         Controls scan execution process
     """
-    def __init__(self, config, session=None, redis=None):
+    def __init__(self, config, session, redis):
         self.config = config
         self.session = session
         self.redis = redis
