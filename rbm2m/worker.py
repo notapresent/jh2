@@ -8,7 +8,7 @@ from helpers import make_config, make_session, make_redis
 
 
 config = make_config()
-sess = make_session(config)
+sess = make_session(None, config)
 redis = make_redis(config)
 scanner = scanner.Scanner(config, sess, redis)
 
