@@ -57,6 +57,7 @@ class RecordImporter(object):
 
         for rec_dict in records:
             if rec_dict['id'] not in old_ids:
+                rec_dict['genre_id'] = self.scan.genre_id
                 rec = self.new_record(rec_dict)
                 self.scan.records.append(rec)
 
