@@ -2,7 +2,6 @@
 import urllib
 
 import requests
-import workerpool
 
 
 HOST = 'http://www.recordsbymail.com/'
@@ -68,7 +67,7 @@ def get_image_list(rec_id):
     return fetch_text(url)
 
 
-def get_image(url):
+def get_content(url):
     """
         Downloads content from url
     """
@@ -80,8 +79,3 @@ class DownloadError(requests.RequestException):
     Raised for all download errors (timeouts, http errors etc)
     """
     pass
-
-
-def fetch_multi(urls):
-    pool = workerpool.WorkerPool(size=5)
-    pool.map(requests.get, urls, saveto)

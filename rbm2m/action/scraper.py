@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-from rbm2m.helpers import retry
+from concurrent import futures
+
 import rbm_parser
 import downloader
+from rbm2m.helpers import retry
+
+
+POOL_SIZE = 5
 
 
 class ScrapeError(Exception):
@@ -47,7 +52,7 @@ def genre_list():
         raise ScrapeError(str(e))
 
 
-@retry(ScrapeError, tries=2, delay=5)
+@retry(ScrapeError, tries=3, delay=5)
 def image_list(rec_id):
     """
         Downloads list of images for a record
@@ -63,5 +68,58 @@ def get_image_urls(rec_ids):
     """
         Download image urls for all records in rec_ids
         and return dict {rec_id_1: ['img_url_1', 'img_url_2', ...], ...}
+        If there was some error while getting image list for record, the
+        corresponding list will be empty
     """
-    pass
+    rv = dict()
+    with futures.ThreadPoolExecutor(max_workers=POOL_SIZE) as executor:
+        fut_to_recid = dict((executor.submit(image_list, rec_id), rec_id)
+                            for rec_id in rec_ids)
+
+        for future in futures.as_completed(fut_to_recid):
+            rec_id = fut_to_recid[future]
+
+            if future.exception() is not None:
+                print('%r raised exception: %s' % (rec_id, future.exception()))
+                urls = []
+            else:
+                urls = future.result()
+
+            rv[rec_id] = urls
+
+    return rv
+
+@retry(ScrapeError, tries=3, delay=5)
+def import_image(url, filename):
+    """
+        Download image from url and save to file. Returns content length
+    """
+    try:
+        content = downloader.fetch(url)
+        with open(filename, 'wb') as f:
+            f.write(content)
+    except downloader.DownloadError as e:
+        raise ScrapeError(e)
+    else:
+        return len(content)
+
+
+def download_and_save_images(images):
+    """
+    Accepts list of tuples (image_id, image_url, filename)
+    Returns list of tuples (image_id, length)
+    """
+    rv = list()
+    with futures.ThreadPoolExecutor(max_workers=POOL_SIZE) as executor:
+        fut_to_imgid = dict((executor.submit(import_image, url, fn), img_id)
+                            for img_id, url, fn in images)
+
+        for future in futures.as_completed(fut_to_imgid):
+            img_id = fut_to_imgid[future]
+
+            if future.exception() is not None:
+                print('%r raised exception: %s' % (img_id, future.exception()))
+            else:
+                rv.append((img_id, future.result()))
+
+    return rv

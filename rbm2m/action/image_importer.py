@@ -2,6 +2,7 @@
 import os
 
 from image_manager import ImageManager
+from record_manager import RecordManager
 import scraper
 
 class ImageImporter(object):
@@ -39,6 +40,10 @@ class ImageImporter(object):
             Generate list of tuples (image_id, image_url, filename)
         """
         for rec_id, urls in rec_image_urls.items():
+
+            if not urls:
+                self.mark_record(rec_id, 'missing_images')
+
             img_ids = list(self.save_image_rows(rec_id, urls))
             yield zip(img_ids, urls, make_img_filenames(img_ids, self.config.MEDIA_DIR))
 
@@ -49,6 +54,14 @@ class ImageImporter(object):
         for url in urls:
             img = self.image_manager.from_dict({'record_id': rec_id, 'url': url})
             yield img.id
+
+    def mark_record(self, rec_id, flag):
+        """
+            Mark record, identified by rec_id, with flag
+        """
+        recman = RecordManager(self.session)
+        rec = recman.get(rec_id)
+        rec.flags.append(flag)
 
 
 def make_img_filenames(img_ids, basedir):
