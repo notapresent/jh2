@@ -73,8 +73,10 @@ def get_image_urls(rec_ids):
     """
     rv = dict()
     with futures.ThreadPoolExecutor(max_workers=POOL_SIZE) as executor:
-        fut_to_recid = dict((executor.submit(image_list, rec_id), rec_id)
-                            for rec_id in rec_ids)
+        fut_to_recid = {}
+        for rec_id in rec_ids:
+            fut = executor.submit(image_list, rec_id)
+            fut_to_recid[fut] = rec_id
 
         for future in futures.as_completed(fut_to_recid):
             rec_id = fut_to_recid[future]
@@ -104,15 +106,17 @@ def import_image(url, filename):
         return len(content)
 
 
-def download_and_save_images(images):
+def download_and_save_images(img_tuples):
     """
     Accepts list of tuples (image_id, image_url, filename)
     Returns list of tuples (image_id, length)
     """
-    rv = list()
+    rv = []
     with futures.ThreadPoolExecutor(max_workers=POOL_SIZE) as executor:
-        fut_to_imgid = dict((executor.submit(import_image, url, fn), img_id)
-                            for img_id, url, fn in images)
+        fut_to_imgid = {}
+        for img_id, url, fn in img_tuples:
+            fut = executor.submit(import_image, url, fn)
+            fut_to_imgid[fut] = img_id
 
         for future in futures.as_completed(fut_to_imgid):
             img_id = fut_to_imgid[future]
