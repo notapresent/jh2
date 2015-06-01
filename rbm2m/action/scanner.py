@@ -89,7 +89,7 @@ class Scanner(object):
         if scan.status == 'aborted':     # or != 'running'
             return
 
-        imp = record_importer.RecordImporter(self.session)
+        imp = record_importer.RecordImporter(self.session, scan)
 
         try:
             imp.run(scan, page_no)
