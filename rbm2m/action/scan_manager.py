@@ -7,7 +7,7 @@ class ScanManager(BaseManager):
     """
         Handles all DB interactions regarding scans
     """
-    __class__ = Scan
+    __model__ = Scan
 
     def get_current_for_genre(self, genre_id):
         """

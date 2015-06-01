@@ -4,4 +4,4 @@ from ..models import Image
 
 
 class ImageManager(BaseManager):
-    __class__ = Image
+    __model__ = Image
