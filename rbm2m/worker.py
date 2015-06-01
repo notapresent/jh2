@@ -20,6 +20,7 @@ def run_task(task_name, *args, **kwargs):
         method(*args, **kwargs)
     except SQLAlchemyError as e:
         sess.rollback()
+        raise
     else:
         sess.commit()
     finally:
