@@ -96,7 +96,7 @@ class Builder(object):
                     Record.artist, Record.title,
                     Record.label, Record.notes, Record.grade, Record.format,
                     Record.price, Genre.title.label('genre_title'),
-                    func.group_concat(Image.source_url).label('images'))
+                    func.group_concat(Image.url).label('images'))
                 .join(Record, Record.id == scan_records.c.record_id)
                 .join(Genre, Genre.id == Record.genre_id)
                 .outerjoin(Image, Image.record_id == scan_records.c.record_id)

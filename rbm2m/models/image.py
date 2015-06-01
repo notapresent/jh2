@@ -12,5 +12,5 @@ class Image(Base):
     record_id = Column(Integer, ForeignKey('records.id'), nullable=False)
     record = relationship('Record', backref=backref('images'))
 
-    source_url = Column(String(512), nullable=False)
+    url = Column(String(512), nullable=False)
     length = Column(Integer)

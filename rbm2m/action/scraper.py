@@ -62,5 +62,6 @@ def image_list(rec_id):
 def get_image_urls(rec_ids):
     """
         Download image urls for all records in rec_ids
+        and return dict {rec_id_1: ['img_url_1', 'img_url_2', ...], ...}
     """
     pass
