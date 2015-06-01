@@ -37,7 +37,6 @@ def parse_page(html):
         next_page = extract_next_page(soup)
         total_count = extract_total_count(soup)
 
-    # TODO need to handle other errors here
     except Exception as e:
         exc_type, exc_val, tb = sys.exc_info()
         dump_exception(exc_type, exc_val, tb, html)
@@ -68,7 +67,6 @@ def extract_records(soup):
         except RecordParseFailed:
             exc_type, exc_val, tb = sys.exc_info()
             dump_exception(exc_type, exc_val, tb, str(item))
-            yield {'id': None, 'success': False}
 
 
 def parse_record_block(tag):
@@ -89,7 +87,6 @@ def parse_record_block(tag):
             'price': extract_price(tag),
             'format': extract_format(tag),
             'has_images': has_images(tag),
-            'success': True  # Special field indicating successful parse
         }
     except Exception as e:
         raise RecordParseFailed(str(e))
