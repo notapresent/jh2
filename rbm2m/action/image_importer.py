@@ -66,10 +66,16 @@ class ImageImporter(object):
 
 def make_img_filenames(img_ids, basedir):
     """
-        Generate a sequence of make_img_filenames from ids
+        Generate a sequence of filenames from ids, creates dirs if needed
     """
     for img_id in img_ids:
-        yield make_filename(img_id, basedir)
+        fn = make_filename(img_id, basedir)
+        dirname = os.path.dirname(fn)
+
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname)
+
+        yield fn
 
 
 def make_filename(img_id, basedir='', suffix='.jpg'):
