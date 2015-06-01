@@ -7,8 +7,10 @@ from ..action import stats, scanner
 
 bp = Blueprint('api', __name__)
 
+
 def jsonified_route():
     pass
+
 
 def route(self, rule, **options):
     """Like :meth:`Flask.route` but for a blueprint.  The endpoint for the
@@ -19,6 +21,7 @@ def route(self, rule, **options):
         self.add_url_rule(rule, endpoint, f, **options)
         return f
     return decorator
+
 
 @bp.before_request
 def check_auth():

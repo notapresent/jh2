@@ -91,6 +91,7 @@ def get_image_urls(rec_ids):
 
     return rv
 
+
 @retry(ScrapeError, tries=3, delay=5)
 def import_image(url, filename):
     """

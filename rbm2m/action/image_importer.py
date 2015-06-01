@@ -5,6 +5,7 @@ from image_manager import ImageManager
 from record_manager import RecordManager
 import scraper
 
+
 class ImageImporter(object):
     """
         Imports images for records
