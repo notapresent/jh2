@@ -42,7 +42,7 @@ def get_overview(sess):
 
     result = dict(zip(row.keys(), row))
 
-    result['images_total_length'] = int(result['images_total_length'])
+    result['images_total_length'] = int(result['images_total_length'] or 0)
 
     return result
 
