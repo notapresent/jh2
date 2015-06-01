@@ -38,8 +38,8 @@ def make_config(app_env=None):
     return getattr(config, '{}Config'.format(app_env))
 
 
-def make_redis(redis_url):
-    return StrictRedis.from_url(redis_url)
+def make_redis(config):
+    return StrictRedis.from_url(config.REDIS_URL)
 
 
 def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
