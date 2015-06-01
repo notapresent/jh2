@@ -18,6 +18,6 @@ class TaskQueue(object):
         """
         # timeout = kwargs.pop('timeout', JOB_TIMEOUT)
         at_front = kwargs.pop('at_front', False)
-        job = self.q.enqueue('worker.run_task', task_name, at_front=at_front,
+        job = self.q.enqueue('rbm2m.worker.run_task', task_name, at_front=at_front,
                              *args, **kwargs)
         return job
