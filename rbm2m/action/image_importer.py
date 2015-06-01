@@ -37,15 +37,21 @@ class ImageImporter(object):
 
     def make_dl_list(self, rec_image_urls):
         """
+            Accepts dict {rec_id_1: ['img_url_1', 'img_url_2', ..], ...}
             Generate list of tuples (image_id, image_url, filename)
         """
         for rec_id, urls in rec_image_urls.items():
-
             if not urls:
                 self.mark_record(rec_id, 'missing_images')
+                continue
 
-            img_ids = list(self.save_image_rows(rec_id, urls))
-            yield zip(img_ids, urls, make_img_filenames(img_ids, self.config.MEDIA_DIR))
+            img_ids = self.save_image_rows(rec_id, urls)
+
+            tuples = zip(img_ids, urls,
+                         make_img_filenames(img_ids, self.config.MEDIA_DIR))
+
+            for t in tuples:
+                yield t
 
     def save_image_rows(self, rec_id, urls):
         """
