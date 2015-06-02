@@ -7,7 +7,7 @@ import downloader
 from rbm2m.helpers import retry
 
 
-POOL_SIZE = 8
+POOL_SIZE = 6
 
 
 class ScrapeError(Exception):
