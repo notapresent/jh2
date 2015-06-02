@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import urllib
+import sys
 
 import requests
+
+from .debug import dump_exception
 
 
 HOST = 'http://www.recordsbymail.com/'
@@ -22,7 +25,9 @@ def fetch(url):
         resp = requests.get(url, timeout=TIMEOUTS)
         resp.raise_for_status()
     except requests.RequestException as e:
-        # TODO add dump_exception
+        exc_type, exc_val, tb = sys.exc_info()
+        notes = resp.text if resp else ''
+        dump_exception('parse', exc_type, exc_val, tb, notes)
         raise DownloadError(e)
 
     else:

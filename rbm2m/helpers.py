@@ -2,6 +2,8 @@
 import os
 import time
 from functools import wraps
+import re
+from unicodedata import normalize
 
 from redis import StrictRedis
 from sqlalchemy import create_engine
@@ -12,6 +14,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask.json import JSONEncoder as BaseJSONEncoder
 
 from . import config
+from .util import to_unicode
+
+
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 
 def make_engine(cfg=None):
@@ -147,3 +153,13 @@ class JSONEncoder(BaseJSONEncoder):
         if isinstance(obj, JsonSerializer):
             return obj.to_json()
         return super(JSONEncoder, self).default(obj)
+
+
+def slugify(text, delim=u'-'):
+    """Generates an ASCII-only slug."""
+    result = []
+    for word in _punct_re.split(to_unicode(text.lower())):
+        word = normalize('NFKD', word).encode('ascii', 'ignore')
+        if word:
+            result.append(word)
+    return unicode(delim.join(result))
