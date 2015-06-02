@@ -73,8 +73,6 @@ def make_filename(img_id, basedir='', suffix='.jpg'):
     """
         Generate filename from id and base dir, with optional suffix
     """
-    strid = str(img_id).zfill(6)
-    frags = [strid[i:i+2] for i in range(0, len(strid), 2)]
-    frags.append("{}{}".format(img_id, suffix))
-    frags.insert(0, basedir)
-    return os.path.join(*frags)
+    strid = str(img_id).zfill(4)
+    chunks = [basedir, strid[-4:-2], strid[-2:], "{}{}".format(strid, suffix)]
+    return os.path.join(*chunks)
