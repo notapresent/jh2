@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from concurrent import futures
 
 import rbm_parser
@@ -6,7 +7,7 @@ import downloader
 from rbm2m.helpers import retry
 
 
-POOL_SIZE = 5
+POOL_SIZE = 8
 
 
 class ScrapeError(Exception):
@@ -82,7 +83,7 @@ def get_image_urls(rec_ids):
             rec_id = fut_to_recid[future]
 
             if future.exception() is not None:
-                print('%r raised exception: %s' % (rec_id, future.exception()))
+                print '*** %r raised: %s' % (rec_id, future.exception())
                 urls = []
             else:
                 urls = future.result()
@@ -97,11 +98,18 @@ def import_image(url, filename):
     """
         Download image from url and save to file. Returns content length
     """
+    dirname = os.path.dirname(filename)
+
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+        print "*** Created %s" % dirname
+
     try:
-        content = downloader.fetch(url)
+        content = downloader.get_content(url)
         with open(filename, 'wb') as f:
             f.write(content)
     except downloader.DownloadError as e:
+        print '*** Error saving image %s: %s' % (url, e)
         raise ScrapeError(e)
     else:
         return len(content)
@@ -123,7 +131,7 @@ def download_and_save_images(img_tuples):
             img_id = fut_to_imgid[future]
 
             if future.exception() is not None:
-                print('%r raised exception: %s' % (img_id, future.exception()))
+                print '*** %r raised: %s' % (img_id, future.exception())
             else:
                 rv.append((img_id, future.result()))
 
