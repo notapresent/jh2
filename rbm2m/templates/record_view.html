@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row vspace">
+    <div class="large-12 columns">
+        <h3>Просмотр записи</h3>
+
+        <table role="grid" class="wide">
+            <tr>
+                <th>ID</th>
+                <td>{{ record.id }}</td>
+            </tr>
+
+            <tr>
+                <th>Исполнитель</th>
+                <td>{{ record.artist }}</td>
+            </tr>
+
+            <tr>
+                <th>Название</th>
+                <td>{{ record.title }}</td>
+            </tr>
+            <tr>
+                <th>Метка</th>
+                <td>{{ record.label }}</td>
+            </tr>
+
+            <tr>
+                <th>Примечания</th>
+                <td>{{ record.notes }}</td>
+            </tr>
+
+            <tr>
+                <th>Дата импорта</th>
+                <td>{{ record.import_date }}</td>
+            </tr>
+
+            <tr>
+                <th>Грейд</th>
+                <td>{{ record.grade }}</td>
+            </tr>
+
+            <tr>
+                <th>Формат</th>
+                <td>{{ record.format }}</td>
+            </tr>
+
+            <tr>
+                <th>Жанр</th>
+                <td>{{ record.genre.title }}</td>
+            </tr>
+
+            <tr>
+                <th>Цена</th>
+                <td>${{ record.price }}</td>
+            </tr>
+
+            <tr>
+                <th>Флаги</th>
+                <td id="flaglist">
+
+                    {% for flag_name, flag in FLAGS.items() %}
+                        <span class="label {{ flag.css_class }}">
+                            <input type="checkbox" id="fl_{{ flag_name }}"
+                                   data-flag_name="{{ flag_name }}"
+                                   {% if flag_name in flag_names %}
+                                   checked
+                                   {% endif %}
+                                   {% if flag.readonly %}
+                                   disabled
+                                   {% endif %}>
+
+                            <label title="{{ flag.description }}"
+                                   class="inline"
+                                   for="fl_{{ flag_name }}">
+                                {{ flag.label }}</label>
+                        </span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+
+            </tr>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script>
+    $(function () {
+        $('#flaglist input:checkbox').change(function () {
+            $.getJSON('{{ url_for("api.toggle_record_flag", rec_id=record.id) }}',
+                    {'flagname': $(this).data('flag_name')},
+
+                    function (data) {
+                        if(!data['success']){
+                            alert('Failed to toggle flag');
+                        }
+
+                    });
+        });
+    }) ;
+</script>
+{% endblock %}

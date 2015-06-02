@@ -42,7 +42,7 @@
 
             <tfoot class="hide">
             <tr id="rec_template">
-                <td class="rec_id">ID</td>
+                <td class="rec_link"><a href="#">ID</a></td>
                 <td class="rec_artist">Исполнитель</td>
                 <td class="rec_title">Название</td>
                 <td class="rec_label">Метка</td>
@@ -71,6 +71,9 @@
                     for (var key in rec) {
                         row.find('td.rec_' + key).html(rec[key]);
                     }
+                    row.find('td.rec_link a')
+                        .attr('href', '{{ url_for(".record_view") }}' + rec['id'])
+                        .html(rec['id']);
 
                     $('#record_table tbody').append(row);
                 });

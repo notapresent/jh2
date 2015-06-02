@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import datetime
 from sqlalchemy import (Column, Integer, String, Text, DateTime, ForeignKey)
 from sqlalchemy.orm import relationship, backref
@@ -8,9 +9,20 @@ from .base import Base
 
 FLAGS = {
     # Marks record that must not appear in export
-    'skip': 'Не экспортировать',
+    'skip': {
+        'label': 'Не экспортировать',
+        'description': 'Исключить эту запись из экспорта в YML и таблицы',
+        'css_class': '',
+        'readonly': False
+
+    },
     # Marks record for which one or more images was not imported
-    'missing_images': 'Ошибка при загрузке картинок'
+    'missing_images': {
+        'label': 'Ошибка при загрузке картинок',
+        'description': 'Не удалось загрузить одну или несколько картинок для этой записи',
+        'css_class': 'alert',
+        'readonly': True
+    }
 }
 
 
@@ -32,8 +44,8 @@ class Record(Base, JsonSerializer):
     genre = relationship("Genre", uselist=False, lazy='joined',
                          backref=backref('records', lazy='dynamic'))
 
-    flags = relationship('RecordFlag',  # lazy='dynamic',
-                         backref=backref('record', lazy='joined'))
+    flags = relationship('RecordFlag',  lazy='dynamic',
+                         backref=backref('record'))
 
 
 class RecordFlag(Base):

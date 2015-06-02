@@ -82,5 +82,12 @@ def record_list():
     recman = record_manager.RecordManager(db.session)
     records = recman.list(filters=filters, search=search_term, order=order,
                           offset=offset)
-
     return jsonify({'records': [rec.to_dict() for rec in records]})
+
+@bp.route('/record/<int:rec_id>/toggle_flag')
+def toggle_record_flag(rec_id):
+    flagname = request.args.get('flagname')
+    recman = record_manager.RecordManager(db.session)
+    return jsonify({'success': recman.toggle_flag(rec_id, flagname)})
+
+

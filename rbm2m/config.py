@@ -28,7 +28,7 @@ class ProductionConfig(Config):
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = True
     DEBUG = True
 
 

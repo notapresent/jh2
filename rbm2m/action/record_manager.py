@@ -2,7 +2,7 @@
 from sqlalchemy import or_
 
 from base_manager import BaseManager
-from ..models import Record
+from ..models import Record, RecordFlag
 
 
 class RecordManager(BaseManager):
@@ -38,3 +38,12 @@ class RecordManager(BaseManager):
             q = q.order_by(getattr(Record, order))
 
         return q.offset(offset).limit(50).all()
+
+    def toggle_flag(self, rec_id, flagname):
+        rec = self.get(rec_id)
+        flag = rec.flags.filter(RecordFlag.name == flagname).first()
+        if flag:
+            rec.flags.remove(flag)
+        else:
+            rec.flags.append(RecordFlag(name=flagname))
+        return True
