@@ -59,3 +59,16 @@ table.wide {
 form#record_filter_form label.left.inline {
     margin-left: 1rem;
 }
+
+div.record_image_div {
+    display: inline-block;
+    margin: 1em;
+}
+div.record_image_div a {
+    display: block;
+}
+
+img.record_image {
+    max-width: 350px;
+    max-height: 350px;
+}

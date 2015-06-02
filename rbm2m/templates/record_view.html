@@ -80,6 +80,18 @@
                 </td>
             </tr>
             <tr>
+                <th>Картинки</th>
+                <td>
+                    {% for img in record.images %}
+                    <div class="record_image_div">
+                        <a href="">
+                            <img class="record_image"
+                                 src="{{ url_for('.serve_media', path=img.make_filename()) }}">
+                        </a>
+                        <a href="{{ img.url }}">Оригинал</a> ({{ img.length|filesizeformat }})
+                    </div>
+                    {% endfor %}
+                </td>
 
             </tr>
 

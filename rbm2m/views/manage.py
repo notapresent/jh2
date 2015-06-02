@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, abort, url_for, Blueprint, current_app
+from flask import render_template, current_app, Blueprint, send_from_directory
 
-from ..action import genre_manager, record_manager
+from ..action import genre_manager, record_manager, image_importer
 from ..webapp import basic_auth, db
 from ..models import record
 
@@ -39,5 +39,13 @@ def record_view(rec_id=None):
     recman = record_manager.RecordManager(db.session)
     rec = recman.get(rec_id)
     flag_names = [flag.name for flag in rec.flags]
+    img_paths = [image_importer.make_filename(img.id) for img in rec.images]
+    print img_paths
     return render_template('record_view.html', record=rec, FLAGS=record.FLAGS,
-                           flag_names=flag_names)
+                           flag_names=flag_names, img_paths=img_paths)
+
+
+@bp.route('/media/<path:path>')
+def serve_media(path):
+    print current_app.config['MEDIA_DIR'], path
+    return send_from_directory(current_app.config['MEDIA_DIR'], path)
