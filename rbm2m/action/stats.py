@@ -82,7 +82,7 @@ def active_scans(sess):
         sess.query(Scan.id, Scan.started_at, Scan.est_num_records,
                    rec_count.label('num_records'), Genre.title)
             .join(Genre, Genre.id == Scan.genre_id)
-            .filter(Scan.status == 'started')
+            .filter(Scan.status == 'running')
             .order_by(Scan.started_at)
             .all()
     )
