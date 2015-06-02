@@ -77,7 +77,7 @@ class RecordImporter(object):
         """
             Update estimated records count every 10 pages
         """
-        if page_no is not None and page_no % 10 == 0:
+        if page_no is None or page_no % 10 == 0:
             self.scan.est_num_records = rec_count
 
 
