@@ -100,12 +100,14 @@ class Scanner(object):
             return
 
         if imp.has_images:
-            self.queue.enqueue('image_task', imp.has_images, at_front=True)
+            imgjob = self.queue.enqueue('image_task', imp.has_images, at_front=True)
+        else:
+            imgjob = None
 
         if imp.next_page:
-            self.queue.enqueue('page_task', scan.id, imp.next_page)
+            self.queue.enqueue('page_task', scan.id, imp.next_page, depends_on=imgjob)
         else:
-            self.finish_scan(scan.id, 'success')
+            self.queue.enqueue('finish_scan', scan.id, 'success', depends_on=imgjob)
 
         print "*** page task completed. Scan #{}/page #{}".format(scan_id, page_no)
 
