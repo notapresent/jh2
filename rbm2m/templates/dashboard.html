@@ -27,13 +27,15 @@
                 <h4>Rock &amp; Pop</h4>
 
                 <div class="right scanstats text-right">
-                    <span><span class="items-current">-</span> записей из
-                        <span class="items-total">-</span></span>
+                    <span><span class="items-current">-</span> из
+                        <span class="items-total">-</span></span>,
+                    <span class="rps">-</span> записей/сек</span>
                     <br>
                     <span>Прошло <span  class="time-elapsed">-</span>
                         осталось <span  class="time-left">-</span></span>
                     <br>
-                    <span class="rps">-</span> записей/сек</span>
+
+                    <a class="cancel">Отменить</a>
 
                 </div>
 
@@ -85,11 +87,11 @@
 
         data['scans'].forEach(function(scan, i, scans) {
             var id = 'scan-' + scan['id'];
-            scan_ids .push(id);
+            scan_ids.push(id);
             var li = $('ul.scans li#' + id);
 
             if(!li.length) {
-                li = $('li#scan-template').clone().attr('id', id).appendTo('ul.scans');
+                li = $('li#scan-template').clone(true).attr('id', id).appendTo('ul.scans');
             }
 
             if(scan['num_records'] > 0) {
@@ -110,6 +112,7 @@
             $(li).find('span.time-elapsed').html(format_time(sec_elapsed));
             $(li).find('span.time-left').html(format_time(sec_left));
             $(li).find('span.rps').html(records_per_sec.toFixed(1));
+            $(li).find('a.cancel').data('scan_id', scan['id']);
 
         });
 
@@ -127,8 +130,21 @@
 
 
     $(function (){
+        $('a.cancel').on('click', function() {
+            $(this).removeClass('cancel').addClass('canceled');
+            $.getJSON('{{ url_for("api.abort_scan") }}',
+                    {'scan_id': $(this).data('scan_id')},
+                    function(data){
+                        if(!data['success']) {
+                            alert(data['message']);
+                        }
+            });
+
+        });
+
         update_status();
         var refreshId = setInterval(update_status, 2000);
+
     });
 </script>
 {% endblock %}

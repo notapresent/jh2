@@ -51,8 +51,13 @@ def run_scan(genre_id):
 
 
 @bp.route('/abort_scan/<int:scan_id>')
+@bp.route('/abort_scan/', defaults={'scan_id': None})
 def abort_scan(scan_id=None):
     scn = scanner.Scanner(current_app.config, db.session, redis)
+
+    if scan_id is None:
+        scan_id = int(request.args.get('scan_id'))
+
     try:
         scn.abort_scan(scan_id)
     except scanner.ScanError as e:  # no such scan or scan not started

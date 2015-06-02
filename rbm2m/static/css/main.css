@@ -52,6 +52,14 @@ li#scan-template {
     font-size: small;
 }
 
+.scanstats a.cancel {
+    color: #f04124;
+}
+
+.scanstats a.canceled {
+    color: #ddd;
+}
+
 table.wide {
     width: 100%;
 }
@@ -72,3 +80,4 @@ img.record_image {
     max-width: 350px;
     max-height: 350px;
 }
+
