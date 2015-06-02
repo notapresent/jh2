@@ -16,8 +16,5 @@ class TaskQueue(object):
         """
             Add task with specified name and arguments to task queue
         """
-        # timeout = kwargs.pop('timeout', JOB_TIMEOUT)
-        at_front = kwargs.pop('at_front', False)
-        job = self.q.enqueue('rbm2m.worker.run_task', task_name, at_front=at_front,
-                             *args, **kwargs)
+        job = self.q.enqueue('rbm2m.worker.run_task', task_name, *args, **kwargs)
         return job
