@@ -47,18 +47,19 @@ class ImageImporter(object):
                 print "*** Missing images for #%d".format(rec_id)
                 continue
 
-            img_ids = self.save_image_rows(rec_id, urls)
+            images = self.save_image_rows(rec_id, urls)
 
-            for img_id, url in zip(img_ids, urls):
-                yield img_id, url, make_filename(img_id, self.config.MEDIA_DIR)
+            for image, url in zip(images, urls):
+                savepath = os.path.join(self.config.MEDIA_DIR, image.make_filename())
+                yield image.id, url, savepath
 
     def save_image_rows(self, rec_id, urls):
         """
-            Insert images for record and yield inserted row ids
+            Insert images for record and yield inserted entities
         """
         for url in urls:
             img = self.image_manager.from_dict({'record_id': rec_id, 'url': url})
-            yield img.id
+            yield img
 
     def mark_record(self, rec_id, flag):
         """

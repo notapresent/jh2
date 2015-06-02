@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
+import urlparse
+
 from sqlalchemy import (Column, Integer, String, ForeignKey)
 from sqlalchemy.orm import relationship, backref
 
@@ -14,3 +17,19 @@ class Image(Base):
 
     url = Column(String(512), nullable=False)
     length = Column(Integer)
+
+    def make_filename(self, suffix=None):
+        """
+            Generate filename from id and base dir, with optional suffix
+        """
+        if suffix is None:
+            suffix = url_suffix(self.url)
+
+        strid = str(self.id).zfill(4)
+        chunks = [strid[-2:], strid[-4:-2], "{}{}".format(strid, suffix)]
+        return os.path.join(*chunks)
+
+
+def url_suffix(url):
+    path = urlparse.urlparse(url).path
+    return os.path.splitext(path)[1]
