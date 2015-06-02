@@ -44,15 +44,13 @@ class ImageImporter(object):
         for rec_id, urls in rec_image_urls.items():
             if not urls:
                 self.mark_record(rec_id, 'missing_images')
+                print "*** Missing images for #%d".format(rec_id)
                 continue
 
             img_ids = self.save_image_rows(rec_id, urls)
 
-            tuples = zip(img_ids, urls,
-                         make_img_filenames(img_ids, self.config.MEDIA_DIR))
-
-            for t in tuples:
-                yield t
+            for img_id, url in zip(img_ids, urls):
+                yield img_id, url, make_filename(img_id, self.config.MEDIA_DIR)
 
     def save_image_rows(self, rec_id, urls):
         """
@@ -69,20 +67,6 @@ class ImageImporter(object):
         recman = RecordManager(self.session)
         rec = recman.get(rec_id)
         rec.flags.append(flag)
-
-
-def make_img_filenames(img_ids, basedir):
-    """
-        Generate a sequence of filenames from ids, creates dirs if needed
-    """
-    for img_id in img_ids:
-        fn = make_filename(img_id, basedir)
-        dirname = os.path.dirname(fn)
-
-        if not os.path.isdir(dirname):
-            os.makedirs(dirname)
-
-        yield fn
 
 
 def make_filename(img_id, basedir='', suffix='.jpg'):
