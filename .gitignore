@@ -57,4 +57,4 @@ supervisord.conf
 
 .idea/
 
-images/
+media/
