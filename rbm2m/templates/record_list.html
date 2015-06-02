@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row vspace">
+    <div class="large-12 columns">
+        <h3>Записи</h3>
+
+        <form id="record_filter_form">
+            <div class="row">
+
+                <div class="large-4 columns">
+                    <select id="f_genre" name="f_genre_id">
+                        <option value="">(Все)</option>
+                        {% for genre in genres %}
+                        <option value="{{ genre.id }}">{{ genre.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="large-4 columns">
+                    <input type="text" name="search" placeholder="Поиск">
+                </div>
+
+            </div>
+
+        </form>
+
+        <table role="grid" class="wide" id="record_table">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Исполнитель</th>
+                <th>Название</th>
+                <th>Метка</th>
+                <th>Грейд</th>
+                <th>Формат</th>
+                <th>Цена</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+
+            <tfoot class="hide">
+            <tr id="rec_template">
+                <td class="rec_id">ID</td>
+                <td class="rec_artist">Исполнитель</td>
+                <td class="rec_title">Название</td>
+                <td class="rec_label">Метка</td>
+                <td class="rec_grade">Грейд</td>
+                <td class="rec_format">Формат</td>
+                <td class="rec_price">Цена</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script>
+    function show_records() {
+        var qs = $("form#record_filter_form").serialize();
+        $.getJSON('{{ url_for("api.record_list") }}' + '?' + qs, {},
+            function (data) {
+
+                $('#record_table tbody').empty();
+
+                data['records'].forEach(function(rec, idx, records){
+                    var row = $('#rec_template').clone().attr('id', null);
+                    for (var key in rec) {
+                        row.find('td.rec_' + key).html(rec[key]);
+                    }
+
+                    $('#record_table tbody').append(row);
+                });
+
+            });
+    }
+
+    $(function () {
+        $('#record_filter_form').submit(function(){ return false;});
+        show_records();
+        $('form input:checkbox, form select').change(show_records);
+        $('form input').keyup(show_records);
+    });
+</script>
+{% endblock %}

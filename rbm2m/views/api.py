@@ -2,7 +2,6 @@
 from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
-from ..models import Genre
 from ..action import stats, scanner, record_manager, genre_manager
 
 bp = Blueprint('api', __name__)
@@ -71,3 +70,17 @@ def update_genre():
     genre = genman.get(genre_id)
     setattr(genre, field, value)
     return jsonify({'success': True})
+
+
+@bp.route('/record_list')
+def record_list():
+    filters = {k[2:]: int(v) for k, v in request.args.items() if k.startswith('f_') and v}
+    search_term = request.args.get('search', None)
+    order = request.args.get('order', 'id')
+    offset = request.args.get('offset', 0)
+
+    recman = record_manager.RecordManager(db.session)
+    records = recman.list(filters=filters, search=search_term, order=order,
+                          offset=offset)
+
+    return jsonify({'records': [rec.to_dict() for rec in records]})

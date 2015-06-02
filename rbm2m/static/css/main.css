@@ -55,3 +55,7 @@ li#scan-template {
 table.wide {
     width: 100%;
 }
+
+form#record_filter_form label.left.inline {
+    margin-left: 1rem;
+}
