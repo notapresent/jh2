@@ -2,9 +2,10 @@
 from sqlalchemy import (Column, Integer, String, Boolean)
 
 from .base import Base
+from ..helpers import JsonSerializer
 
 
-class Genre(Base):
+class Genre(Base, JsonSerializer):
     __tablename__ = 'genres'
     id = Column(Integer, primary_key=True)
     title = Column(String(50), nullable=False)

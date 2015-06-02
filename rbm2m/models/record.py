@@ -3,6 +3,7 @@ import datetime
 from sqlalchemy import (Column, Integer, String, Text, DateTime, ForeignKey)
 from sqlalchemy.orm import relationship, backref
 
+from ..helpers import JsonSerializer
 from .base import Base
 
 FLAGS = {
@@ -13,7 +14,7 @@ FLAGS = {
 }
 
 
-class Record(Base):
+class Record(Base, JsonSerializer):
     __tablename__ = 'records'
 
     id = Column(Integer, primary_key=True, autoincrement=False)

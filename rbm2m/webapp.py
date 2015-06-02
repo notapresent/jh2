@@ -8,6 +8,8 @@ from flask.ext.basicauth import BasicAuth
 from flask.ext.redis import FlaskRedis
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from helpers import JSONEncoder
+
 db = SQLAlchemy()
 basic_auth = BasicAuth()
 redis = FlaskRedis()
@@ -17,6 +19,7 @@ def create_app(app_env):
     app = Flask(__name__)
     app.config.from_object('rbm2m.config.{}Config'.format(app_env))
 
+    app.json_encoder = JSONEncoder
     db.init_app(app)
     basic_auth.init_app(app)
     redis.init_app(app, strict=True)

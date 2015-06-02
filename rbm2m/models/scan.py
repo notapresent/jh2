@@ -4,6 +4,7 @@ from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey, Table)
 from sqlalchemy.orm import relationship, backref
 
 from .base import Base
+from ..helpers import JsonSerializer
 
 
 scan_records = Table(
@@ -14,7 +15,7 @@ scan_records = Table(
 )
 
 
-class Scan(Base):
+class Scan(Base, JsonSerializer):
     __tablename__ = 'scans'
 
     id = Column(Integer, primary_key=True)
@@ -32,9 +33,3 @@ class Scan(Base):
     # Estimated number of records
     est_num_records = Column(Integer)
     status = Column(String(50), nullable=False)
-
-    @classmethod
-    def get_current(cls, genre_id, session):
-        return session.query(cls) \
-            .filter_by(genre_id=genre_id, status='started') \
-            .first()
