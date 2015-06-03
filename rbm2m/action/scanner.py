@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
+import logging
 
 import task_queue
 import scan_manager
 import record_importer
 import image_importer
+
+
+logger = logging.getLogger(__name__)
 
 
 class ScanError(Exception):
@@ -79,7 +83,7 @@ class Scanner(object):
         """
             Set scan status and finish date
         """
-        print "*** Scan #{} finished with status {}".format(scan_id, status)
+        logger.info("Scan #{} finished with status {}".format(scan_id, status))
         scan = self.scan_manager.get(scan_id)
         scan.status = status
         scan.finished_at = datetime.datetime.utcnow()
@@ -88,7 +92,6 @@ class Scanner(object):
         """
             Import records from page and queue next page and/or image import
         """
-        print "*** Page task started. Scan #{}/page #{}".format(scan_id, page_no or 0)
         scan = self.scan_manager.get(scan_id)
         if scan.status == 'aborted':     # or != 'running'
             return
@@ -99,7 +102,7 @@ class Scanner(object):
             imp.run(scan, page_no)
         except record_importer.RecordImportError as e:
             self.finish_scan(scan.id, 'failed')
-            print "*** page task failed: {}".format(e)
+            logger.error("Page #{} of scan #{}: {}".format(page_no or 0, scan_id, e))
             return
 
         if imp.has_images:
@@ -112,7 +115,7 @@ class Scanner(object):
         else:
             self.queue.enqueue('finish_scan', scan.id, 'success', depends_on=imgjob)
 
-        print "*** page task completed. Scan #{}/page #{}".format(scan_id, page_no)
+        logger.debug("Page #{} of scan #{} completed".format(page_no or 0, scan_id))
 
     def image_task(self, rec_ids):
         """

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import logging
 
 from image_manager import ImageManager
 from record_manager import RecordManager
 import scraper
+
+
+logger = logging.getLogger(__name__)
 
 
 class ImageImporter(object):
@@ -46,7 +50,7 @@ class ImageImporter(object):
         for rec_id, urls in rec_image_urls.items():
             if not urls:
                 self.mark_record(rec_id, 'missing_images')
-                print "*** Missing images for #%d".format(rec_id)
+                logger.warn("Missing images for record #%d".format(rec_id))
                 continue
 
             images = self.save_image_rows(rec_id, urls)

@@ -100,7 +100,8 @@ def toggle_record_flag(rec_id):
 @bp.route('/save_settings', methods=['POST'])
 def save_settings():
     settings = user_settings.UserSettings(db.session)
+
     for item in request.json:
-        print 'Setting {}'.format(item['name'])
         settings[item['name']] = item['value']
+
     return jsonify({'success': True})

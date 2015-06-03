@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from flask import Blueprint, render_template, request
 
 from ..webapp import db
@@ -6,6 +8,7 @@ from ..yml import Builder as YMLBuilder
 from ..action import export_manager
 
 bp = Blueprint('public', __name__)
+logger = logging.getLogger(__name__)
 
 
 @bp.route('/yml')
@@ -23,9 +26,14 @@ def yml():
         'format': 'yml'
     }
     exp = expman.from_dict(expdata)
+    message = "YML export for {}@{} completed"
+    logger.info(message.format(request.environ.get('HTTP_USER_AGENT'),
+                               request.environ.get('REMOTE_ADDR')))
     return render_template('yml.xml', **ctx)
 
 
 @bp.route('/table')
 def table():
-    raise NotImplementedError()
+    message = "Table export for {}@{} completed"
+    logger.info(message.format(request.environ.get('HTTP_USER_AGENT'),
+                               request.environ.get('REMOTE_ADDR')))
