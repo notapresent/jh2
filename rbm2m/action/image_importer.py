@@ -49,17 +49,26 @@ class ImageImporter(object):
 
             images = self.save_image_rows(rec_id, urls)
 
-            for image, url in zip(images, urls):
+            for image in images:
                 savepath = os.path.join(self.config.MEDIA_DIR, image.make_filename())
-                yield image.id, url, savepath
+                yield image.id, image.url, savepath
 
     def save_image_rows(self, rec_id, urls):
         """
-            Insert images for record and yield inserted entities
+            Return list of images for rec_id, creating new ones if necessary.
+            Do not return existing images with length>0
         """
         for url in urls:
-            img = self.image_manager.from_dict({'record_id': rec_id, 'url': url})
-            yield img
+            fields = {'record_id': rec_id, 'url': url}
+            img = self.image_manager.find(**fields).first()
+
+            if img and img.length:
+                pass
+            elif img:
+                yield img
+            else:
+                yield self.image_manager.from_dict(fields)
+
 
     def mark_record(self, rec_id, flag):
         """

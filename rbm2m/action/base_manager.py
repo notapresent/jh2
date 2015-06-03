@@ -30,3 +30,20 @@ class BaseManager(object):
             Return all entities
         """
         return self.session.query(self.__model__).all()
+
+    def find(self, **kwargs):
+        """
+            Returns a list of instances of the service's model filtered by the
+            specified key word arguments.
+        """
+        return self.session.query(self.__model__).filter_by(**kwargs)
+
+    def get_or_insert(self, **kwargs):
+        """
+            Find and return first entry or create a new one
+        """
+        entry = self.find(**kwargs).first()
+        if not entry:
+            entry = self.from_dict(kwargs)
+
+        return entry
