@@ -44,7 +44,7 @@ def parse_image_list(json_data):
 def extract_records(soup):
     """
         Extract records from search page result, represented by BS object
-        Yields parsed records as dicts or dummy dict in case of error
+        Yields successfully parsed records as dicts
     """
     container = soup.find('ul', id='records-list')
     items = container.find_all('li', class_='record-block')
@@ -60,9 +60,6 @@ def extract_records(soup):
 def parse_record_block(tag):
     """
         Parse tag containing record and return parsed values as a dict
-
-        :param tag: BeautifulSoup tag
-        :return: dict
     """
     try:
         rec = {
