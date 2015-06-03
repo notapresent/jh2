@@ -49,7 +49,6 @@ def record_view(rec_id=None):
 
 @bp.route('/media/<path:path>')
 def serve_media(path):
-    print current_app.config['MEDIA_DIR'], path
     return send_from_directory(current_app.config['MEDIA_DIR'], path)
 
 
