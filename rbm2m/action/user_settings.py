@@ -74,7 +74,8 @@ class UserSettings(dict):
         return self._values[key]
 
     def __setitem__(self, key, value):
-        self._values[key].value = value
+        print "Setter for {}".format(key)
+        self._values[key]['value'] = value
         entry = self.manager.get(key)
         entry.value = value
 
