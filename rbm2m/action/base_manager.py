@@ -18,7 +18,7 @@ class BaseManager(object):
 
     def from_dict(self, d):
         """
-            Create new instance with properties set from dict
+            Create new instance with properties set from _values
         """
         obj = self.__model__(**d)
         self.session.add(obj)
@@ -60,3 +60,9 @@ class BaseManager(object):
         """
         entry = self.get(pk)
         self.delete(entry)
+
+    def delete_all(self):
+        """
+            Delete all records from table
+        """
+        return self.session.query(self.__model__).delete()
