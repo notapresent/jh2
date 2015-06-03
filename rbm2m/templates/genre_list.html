@@ -66,17 +66,22 @@
             $.getJSON(
                 '{{ url_for("api.update_genre") }}',
                 {gid: gid, f: field, v: + this.checked},
-                function(data){
-
+                function(data) {
+                    if(!data['success']) {
+                        alert('Failed to change flag: ' + data['message']);
+                    }
                 });
         });
 
-        $('button.run_scan').click(function(){
-            var genre_id = $(this).data('genre_id');
+        $('button.run_scan').click(function() {
+            var elem = $(this);
             $.getJSON(
-                '{{ url_for("api.run_scan") }}' + genre_id, {},
+                '{{ url_for("api.run_scan") }}' + $(this).data('genre_id'), {},
                 function(data) {
-                    if(!data['success']) {
+                    if(data['success']) {
+                        elem.html('Запущен').attr('disabled', true);
+                    }
+                    else {
                         alert('Failed to start scan: ' + data['message']);
                     }
                 });
