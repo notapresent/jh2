@@ -97,7 +97,11 @@
             if(scan['num_records'] > 0) {
                 var progress = scan['num_records'] / scan['est_num_records'] * 100;
                 var sec_elapsed = (new Date() - new Date(scan['started_at'])) / 1000;
-                var records_per_sec = scan['num_records'] / sec_elapsed;
+                var records_per_sec = 0;
+                if(scan['num_records']) {
+                    var records_per_sec = scan['num_records'] / sec_elapsed;
+                }
+                rps_s = records_per_sec.toFixed(1);
                 var sec_left =  (scan['est_num_records'] - scan['num_records']) / records_per_sec;
             } else {
                 var progress = 0;
@@ -105,13 +109,14 @@
                 var sec_elapsed= 0;
             }
 
+
             $(li).find('h4').html(scan['title']);
             $(li).find('span.items-current').html(scan['num_records']);
             $(li).find('span.items-total').html(scan['est_num_records']);
             $(li).find('span.meter').attr('style', 'width: ' + progress + '%;');
             $(li).find('span.time-elapsed').html(format_time(sec_elapsed));
             $(li).find('span.time-left').html(format_time(sec_left));
-            $(li).find('span.rps').html(records_per_sec.toFixed(1));
+            $(li).find('span.rps').html(rps_s);
             $(li).find('a.cancel').data('scan_id', scan['id']);
 
         });
