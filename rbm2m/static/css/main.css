@@ -81,3 +81,8 @@ img.record_image {
     max-height: 350px;
 }
 
+.scan-status.success { background-color: lightgreen; }
+.scan-status.running { background-color: lightblue; }
+.scan-status.aborted { background-color: lightgoldenrodyellow; }
+.scan-status.queued { }
+.scan-status.failed { background-color: lightcoral;}

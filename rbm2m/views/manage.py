@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, current_app, Blueprint, send_from_directory
 
-from ..action import genre_manager, record_manager, image_importer
+from ..action import genre_manager, record_manager, scan_manager
 from ..webapp import basic_auth, db
-from ..models import record
+from ..models import record, scan
 
 
 bp = Blueprint('manage', __name__)
@@ -49,3 +49,11 @@ def record_view(rec_id=None):
 def serve_media(path):
     print current_app.config['MEDIA_DIR'], path
     return send_from_directory(current_app.config['MEDIA_DIR'], path)
+
+
+@bp.route('/imports/')
+def import_list():
+    scanman = scan_manager.ScanManager(db.session)
+    scans = scanman.last_scans()
+    return render_template('import_list.html',
+                           scans=scans, SCAN_STATUSES=scan.SCAN_STATUSES)

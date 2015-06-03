@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row vspace">
+    <div class="large-12 columns">
+        <h3>Последние сканы</h3>
+
+        <table role="grid" class="wide">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Жанр</th>
+                    <th>Начало</th>
+                    <th>Окончание</th>
+                    <th>Продолжительность</th>
+                    <!--<th>Записей</th>-->
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scan in scans: %}
+                <tr class="scan-status {{ scan.status }}">
+                    <td>{{ scan.id }}</td>
+                    <td>{{ scan.genre.title }}</td>
+                    <td>{{ scan.started_at }}</td>
+                    <td>{{ scan.finished_at }}</td>
+                    <td>{{ scan.duration }}</td>
+                    <!--<td>~</td>-->
+                    <td>{{ SCAN_STATUSES[scan.status] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

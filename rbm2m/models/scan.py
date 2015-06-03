@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import datetime
 from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey, Table)
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .base import Base
 from ..helpers import JsonSerializer
 
+
+SCAN_STATUSES = {
+    'success': 'Успешно завершен',
+    'running': 'В процессе',
+    'aborted': 'Отменен',
+    'queued': 'В очереди',
+    'failed': 'Ошибка'
+}
 
 scan_records = Table(
     'scan_records',
@@ -33,3 +43,10 @@ class Scan(Base, JsonSerializer):
     # Estimated number of records
     est_num_records = Column(Integer)
     status = Column(String(50), nullable=False)
+
+    @hybrid_property
+    def duration(self):
+        if self.finished_at:
+            return self.finished_at - self.started_at
+        else:
+            return datetime.datetime.utcnow() - self.started_at

@@ -19,3 +19,11 @@ class ScanManager(BaseManager):
             .filter(Scan.status.in_(['queued', 'running', 'aborting']))
             .all()
         )
+
+    def last_scans(self):
+        return (
+            self.session.query(Scan)
+            .order_by(Scan.started_at.desc())
+            .limit(50)
+            .all()
+        )
