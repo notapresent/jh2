@@ -39,7 +39,7 @@ def record_view(rec_id=None):
     recman = record_manager.RecordManager(db.session)
     rec = recman.get(rec_id)
     flag_names = [flag.name for flag in rec.flags]
-    img_paths = [image_importer.make_filename(img.id) for img in rec.images]
+    img_paths = [img.make_filename() for img in rec.images]
     print img_paths
     return render_template('record_view.html', record=rec, FLAGS=record.FLAGS,
                            flag_names=flag_names, img_paths=img_paths)
