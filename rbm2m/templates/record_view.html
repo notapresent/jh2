@@ -84,7 +84,7 @@
                 <td>
                     {% for img in record.images %}
                     <div class="record_image_div">
-                        <a href="">
+                        <a href="{{ url_for('.serve_media', path=img.make_filename()) }}">
                             <img class="record_image"
                                  src="{{ url_for('.serve_media', path=img.make_filename()) }}">
                         </a>
