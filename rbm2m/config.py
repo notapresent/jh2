@@ -5,6 +5,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 class Config(object):
+
     """
         Default configuration
     """

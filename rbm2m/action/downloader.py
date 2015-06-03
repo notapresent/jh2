@@ -80,6 +80,7 @@ def get_content(url):
 
 
 class DownloadError(requests.RequestException):
+
     """
     Raised for all download errors (timeouts, http errors etc)
     """

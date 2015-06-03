@@ -8,6 +8,7 @@ import image_importer
 
 
 class ScanError(Exception):
+
     """
         Base exception for this module
     """
@@ -15,9 +16,11 @@ class ScanError(Exception):
 
 
 class Scanner(object):
+
     """
         Controls scan execution process
     """
+
     def __init__(self, config, session, redis):
         self.config = config
         self.session = session

@@ -4,6 +4,7 @@ from ..models import Scan
 
 
 class ScanManager(BaseManager):
+
     """
         Handles all DB interactions regarding scans
     """

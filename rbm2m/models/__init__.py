@@ -14,4 +14,3 @@ from setting import Setting
 # This allows `from models import *` for simple create_all/drop_all
 __all__ = ['Genre', 'Image', 'Record', 'RecordFlag', 'Scan', 'scan_records',
            'Export', 'Setting']
-

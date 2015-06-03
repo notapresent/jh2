@@ -2,6 +2,7 @@
 
 
 class BaseManager(object):
+
     """
         Base class for database managers
     """

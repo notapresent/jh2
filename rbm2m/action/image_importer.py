@@ -7,9 +7,11 @@ import scraper
 
 
 class ImageImporter(object):
+
     """
         Imports images for records
     """
+
     def __init__(self, config, session):
         self.config = config
         self.session = session
@@ -68,7 +70,6 @@ class ImageImporter(object):
                 yield img
             else:
                 yield self.image_manager.from_dict(fields)
-
 
     def mark_record(self, rec_id, flag):
         """

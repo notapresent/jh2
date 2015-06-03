@@ -34,6 +34,7 @@ def record_list():
     genres = genman.all()
     return render_template('record_list.html', genres=genres)
 
+
 @bp.route('/record/<int:rec_id>')
 @bp.route('/record/', defaults={'rec_id': None})
 def record_view(rec_id=None):

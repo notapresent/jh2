@@ -93,6 +93,7 @@ def retry(exception_to_check, tries=4, delay=3, backoff=2, logger=None):
 
 
 class group_concat(expression.FunctionElement):
+
     """
         Custom function for use with SQLAlchemy
     """
@@ -111,6 +112,7 @@ def _group_concat_mysql(element, compilr, **kw):
 
 
 class JsonSerializer(object):
+
     """A mixin that can be used to mark a SQLAlchemy model class which
     implements a :func:`to_json` method. The :func:`to_json` method is used
     in conjuction with the custom :class:`JSONEncoder` class. By default this
@@ -146,9 +148,11 @@ class JsonSerializer(object):
 
 
 class JSONEncoder(BaseJSONEncoder):
+
     """Custom :class:`JSONEncoder` which respects objects that include the
     :class:`JsonSerializer` mixin.
     """
+
     def default(self, obj):
         if isinstance(obj, JsonSerializer):
             return obj.to_json()

@@ -6,6 +6,7 @@ from ..models import Record, RecordFlag
 
 
 class RecordManager(BaseManager):
+
     """
         Handles all DB interactions regarding records
     """

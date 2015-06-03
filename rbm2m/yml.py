@@ -27,6 +27,7 @@ DESCRIPTION_TEMPLATE = '''
 
 
 class Builder(object):
+
     def __init__(self, session):
         self.session = session
 

@@ -60,6 +60,7 @@ def flush_redis():
     redis.flushdb()
     click.echo('Redis DB flushed')
 
+
 @main.command()
 def reset_settings():
     """

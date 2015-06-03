@@ -6,9 +6,11 @@ JOB_TIMEOUT = 300   # seconds
 
 
 class TaskQueue(object):
+
     """
         Abstracts task queue
     """
+
     def __init__(self, redis=None):
         self.q = rq.Queue(connection=redis, default_timeout=JOB_TIMEOUT)
 

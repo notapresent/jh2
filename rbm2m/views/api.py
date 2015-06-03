@@ -89,6 +89,7 @@ def record_list():
                           offset=offset)
     return jsonify({'records': [rec.to_dict() for rec in records]})
 
+
 @bp.route('/record/<int:rec_id>/toggle_flag')
 def toggle_record_flag(rec_id):
     flagname = request.args.get('flagname')

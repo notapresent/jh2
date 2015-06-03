@@ -47,10 +47,13 @@ DEFAULT_SETTINGS = {
         },
 }
 
+
 class UserSettings(dict):
+
     """
         User settings container
     """
+
     def __init__(self, session):
         self.manager = setting_manager.SettingManager(session)
         self._values = self.load_values()

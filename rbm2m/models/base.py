@@ -7,6 +7,7 @@ declarative_base = lambda cls: real_declarative_base(cls=cls)
 
 @declarative_base
 class Base(object):
+
     """
     Add some default properties and methods to the SQLAlchemy declarative base.
     """

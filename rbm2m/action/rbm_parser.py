@@ -140,6 +140,7 @@ def extract_total_count(soup):
 
 
 class ParseError(Exception):
+
     """
         Raised for all parse errors.
     """
@@ -147,9 +148,8 @@ class ParseError(Exception):
 
 
 class RecordParseFailed(ParseError):
+
     """
         Raised if parsing particular record failed
     """
     pass
-
-

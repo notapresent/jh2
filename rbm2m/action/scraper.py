@@ -11,6 +11,7 @@ POOL_SIZE = 6
 
 
 class ScrapeError(Exception):
+
     """
         Raised if scraping failed for any reason (after all retries)
     """
@@ -18,9 +19,11 @@ class ScrapeError(Exception):
 
 
 class Scrape(object):
+
     """
         Represents one page scrape operation
     """
+
     def __init__(self):
         self.records = []
         self.next_page = None

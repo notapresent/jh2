@@ -4,6 +4,7 @@ import scraper
 
 
 class RecordImporter(object):
+
     def __init__(self, session, scan):
         self.session = session
         self.scan = scan
@@ -82,6 +83,7 @@ class RecordImporter(object):
 
 
 class RecordImportError(Exception):
+
     """
         Unrecoverable record import error
     """
