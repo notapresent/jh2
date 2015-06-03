@@ -58,3 +58,4 @@ supervisord.conf
 .idea/
 
 media/
+logs/

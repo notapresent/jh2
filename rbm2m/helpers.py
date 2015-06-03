@@ -4,6 +4,12 @@ import time
 from functools import wraps
 import re
 from unicodedata import normalize
+import logging
+import logging.config
+from logging import StreamHandler, Formatter
+from logging.handlers import RotatingFileHandler
+
+
 
 from redis import StrictRedis
 from sqlalchemy import create_engine
@@ -17,7 +23,7 @@ from . import config
 from .util import to_unicode
 
 
-_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+logger = logging.getLogger(__name__)
 
 
 def make_engine(cfg=None):
@@ -159,6 +165,10 @@ class JSONEncoder(BaseJSONEncoder):
         return super(JSONEncoder, self).default(obj)
 
 
+
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
+
 def slugify(text, delim=u'-'):
     """Generates an ASCII-only slug."""
     result = []
@@ -167,3 +177,30 @@ def slugify(text, delim=u'-'):
         if word:
             result.append(word)
     return unicode(delim.join(result))
+
+
+def setup_logging(log_dir, component, debug=True):
+    applogger = logging.getLogger('rbm2m')
+
+    if debug:
+        applogger.setLevel(logging.DEBUG)
+        hnd = StreamHandler()
+        hnd.setFormatter(Formatter(
+            '%(name)s %(levelname)s: %(message)s'
+        ))
+        applogger.addHandler(hnd)
+
+    else:
+        applogger.setLevel(logging.WARNING)
+        filename = os.path.join(log_dir, '{}.log'.format(component))
+        hnd = RotatingFileHandler(filename, maxBytes=5000000, backupCount=5)
+        hnd.setFormatter(Formatter(
+            '%(asctime)s %(process)d %(name)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'
+        ))
+        applogger.addHandler(hnd)
+
+    # Limit 3rd party package logging
+    loggers = ['requests', 'sqlalchemy', 'rq']
+    for logger_name in loggers:
+        logging.getLogger(logger_name).setLevel(logging.WARNING)

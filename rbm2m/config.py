@@ -22,6 +22,8 @@ class Config(object):
     BASIC_AUTH_PASSWORD = os.environ['RBM2M_PASSWORD']
 
     MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+    LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+
 
 
 class ProductionConfig(Config):
