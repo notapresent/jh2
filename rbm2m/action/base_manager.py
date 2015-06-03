@@ -47,3 +47,16 @@ class BaseManager(object):
             entry = self.from_dict(kwargs)
 
         return entry
+
+    def delete(self, entry):
+        """
+            Delete entry from db
+        """
+        self.session.delete(entry)
+
+    def delete_by_id(self, pk):
+        """
+            Delete entry by id
+        """
+        entry = self.get(pk)
+        self.delete(entry)
