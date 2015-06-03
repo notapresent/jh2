@@ -5,6 +5,7 @@ from redis import StrictRedis
 from rbm2m.models.base import Base
 from .models import Genre
 from rbm2m.action import scraper
+from .action import user_settings
 from helpers import make_session, make_config, make_engine
 
 config = make_config()
@@ -58,3 +59,14 @@ def flush_redis():
     redis = StrictRedis.from_url(config.REDIS_URL)
     redis.flushdb()
     click.echo('Redis DB flushed')
+
+@main.command()
+def reset_settings():
+    """
+        Reset user settings to default values
+    """
+    session = make_session(engine)
+    settings = user_settings.UserSettings(session)
+    settings.reset()
+    session.commit()
+    click.echo('User settings reset to default values')

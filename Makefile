@@ -30,3 +30,4 @@ init:
 	@python -m rbm2m createdb
 	@python -m rbm2m flush_redis
 	@python -m rbm2m import_genres
+	@python -m rbm2m reset_settings
