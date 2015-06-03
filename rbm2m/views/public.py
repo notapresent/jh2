@@ -37,3 +37,4 @@ def table():
     message = "Table export for {}@{} completed"
     logger.info(message.format(request.environ.get('HTTP_USER_AGENT'),
                                request.environ.get('REMOTE_ADDR')))
+    raise NotImplementedError('Not yet')
