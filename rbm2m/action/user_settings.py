@@ -1,25 +1,59 @@
 # -*- coding: utf-8 -*-
-import collections.abc
-
+from __future__ import unicode_literals
 from . import setting_manager
 
 
-class UserSettings(collections.abc.Mapping):
+DEFAULT_SETTINGS = {
+    'formula_yml':
+        {
+            'title': 'Формула рассчета цены в YML',
+            'value': 'x*60 if x < 1000 else x*60 + 10',
+            'data_type': 'string',
+            'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
+        },
+
+    'formula_xls':
+        {
+            'title': 'Формула рассчета цены в XLS',
+            'value': 'x*60 if x < 1000 else x*60 + 10',
+            'data_type': 'string',
+            'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
+        },
+
+    'yml_description_template':
+        {
+            'title': 'Шаблон описания лота в YML',
+            'value': '''
+{artist} - {title}, {format}<br>
+<br>
+Артикул товара:{id}<br>
+Лейбл: {label}<br>
+Грейд: {grade}<br>
+Примечания: {notes}<br>
+<br>
+Дополнительный блок описания
+''',
+            'data_type': 'text',
+            'description': '''
+Доступные переменные:<br>
+<code>{id}</code> - ID<br>
+<code>{artist}</code> - Исполнитель<br>
+<code>{title}</code> - Название<br>
+<code>{format}</code> - Формат<br>
+<code>{label}</code> - Метка<br>
+<code>{grade}</code> - Грейд<br>
+<code>{notes}</code> - Примечания
+''',
+        },
+}
+
+class UserSettings(dict):
     """
         User settings container
     """
     def __init__(self, session):
         self.manager = setting_manager.SettingManager(session)
-        self._values = None
-
-    @property
-    def dict(self):
-        """
-            Dictionary containing all settings
-        """
-        if self._values is None:
-            self._values = self.load_values()
-        return self._values
+        self._values = self.load_values()
 
     def load_values(self):
         """
@@ -31,19 +65,29 @@ class UserSettings(collections.abc.Mapping):
         return rv
 
     def __iter__(self):
-        return iter(self.dict)
+        return iter(self._values.keys())
 
     def __len__(self):
-        return len(self.dict)
+        return len(self._values.keys())
 
     def __getitem__(self, key):
-        return self.dict[key].value
+        return self._values[key]
 
     def __setitem__(self, key, value):
-        self.dict[key].value = value
+        self._values[key].value = value
         entry = self.manager.get(key)
-        setattr(entry, key, value)
+        entry.value = value
 
     def __delitem__(self, key):
-        del self.dict[key]
+        del self._values[key]
         self.manager.delete_by_id(key)
+
+    def reset(self):
+        """
+            Reset all settings to defaults
+        """
+        self.manager.delete_all()
+        for name, val in DEFAULT_SETTINGS.items():
+            val['name'] = name
+            val['default_value'] = val['value']
+            self.manager.from_dict(val)
