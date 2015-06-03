@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, current_app, Blueprint, send_from_directory
 
-from ..action import genre_manager, record_manager, scan_manager
+from ..action import (genre_manager, record_manager, scan_manager, export_manager,
+                      user_settings)
 from ..webapp import basic_auth, db
 from ..models import record, scan
 
@@ -57,3 +58,11 @@ def import_list():
     scans = scanman.last_scans()
     return render_template('import_list.html',
                            scans=scans, SCAN_STATUSES=scan.SCAN_STATUSES)
+
+
+@bp.route('/exports/')
+def export_list():
+    expman = export_manager.ExportManager(db.session)
+    exports = expman.last_exports()
+    settings = user_settings.UserSettings(db.session)
+    return render_template('export_list.html', exports=exports, settings=settings)

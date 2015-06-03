@@ -2,7 +2,7 @@ body {
     background-color: #eee;
 }
 
-div.row {
+div.row, div.vspace {
     background-color: #fff;
 }
 
@@ -86,3 +86,7 @@ img.record_image {
 .scan-status.aborted { background-color: lightgoldenrodyellow; }
 .scan-status.queued { }
 .scan-status.failed { background-color: lightcoral;}
+
+div.alertdiv {
+    margin: 1em 0;
+}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row vspace">
+
+    <div class="large-12 columns">
+        <h3>Ссылки</h3>
+        <form>
+            <div class="row">
+                <div class="large-6 column">
+            <label for="link_yml">YML</label>
+            <input readonly id="link_yml" type="text" value="{{ url_for('public.yml', _external=True) }}">
+                    </div>
+                <div class="large-6 column">
+            <label for="link_xls">XLS</label>
+            <input readonly id="link_xls" type="text" value="{{ url_for('public.table', _external=True) }}">
+                    </div>
+                </div>
+        </form>
+
+        <h3>Настройки</h3>
+
+        <form id="settings_form">
+        <div id="alertdiv"></div>
+
+            {% for key in settings %}
+            <div class="row">
+                <div class="large-6 columns">
+                    <label>{{ settings[key].title }}
+
+                        {% if settings[key].data_type == 'string' %}
+                        <input name="{{ key }}" type="text"
+                               placeholder="" value="{{ settings[key].value }}">
+                        {% elif settings[key].data_type == 'text' %}
+                        <textarea placeholder="" name="{{ key }}"
+                                  rows="{{ settings[key].value.count('\n') }}">{{ settings[key].value }}</textarea>
+                        {% endif %}
+                    </label>
+                </div>
+                <div class="large-6 columns">
+                    {{ settings[key].description|safe }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            <button type="button" id="save">Сохранить</button>
+
+        </form>
+
+    </div>
+</div>
+
+
+<div class="row vspace">
+    <div class="large-12 columns">
+
+        <h3>Последние операции</h3>
+
+        <table role="grid" class="wide">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Формат</th>
+                <th>Дата</th>
+                <th>IP</th>
+                <th>User agent</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for export in exports: %}
+            <tr>
+                <td>{{ export.id }}</td>
+                <td>{{ export.format }}</td>
+                <td>{{ export.started_at }}</td>
+                <td>{{ export.ip }}</td>
+                <td>{{ export.user_agent }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="hide">
+    <div id="alert-template" data-alert class="alert-box"><a href="#" class="close">&times;</a></div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script>
+    function show_alert(text, cls) {
+        $("#alertdiv").empty();
+        $('#alert-template').clone().prepend(text).addClass(cls).appendTo("#alertdiv");
+
+    }
+    $(function(){
+        $('#save').click(function () {
+            var data = $('#settings_form').serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('api.save_settings') }}",
+                async: false,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                complete: function (data) {
+                    if(data['success']) {
+                        show_alert('Настройки сохранены', 'success');
+                    } else {
+                        show_alert(data['message'], 'alert');
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

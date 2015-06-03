@@ -2,7 +2,7 @@
 from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
-from ..action import stats, scanner, record_manager, genre_manager
+from ..action import stats, scanner, record_manager, genre_manager, user_settings
 
 bp = Blueprint('api', __name__)
 
@@ -96,3 +96,10 @@ def toggle_record_flag(rec_id):
     return jsonify({'success': recman.toggle_flag(rec_id, flagname)})
 
 
+@bp.route('/save_settings', methods=['POST'])
+def save_settings():
+    settings = user_settings.UserSettings(db.session)
+    for item in request.json:
+        print 'Setting {}'.format(item['name'])
+        settings[item['name']] = item['value']
+    return jsonify({'success': True})
