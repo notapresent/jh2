@@ -5,3 +5,9 @@ from ..models import Genre
 
 class GenreManager(BaseManager):
     __model__ = Genre
+
+    def exported_list(self):
+        return (self.session.query(Genre)
+            .filter_by(Genre.export_enabled=True)
+            .order_by(Genre.id)
+        )
