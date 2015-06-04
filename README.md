@@ -6,7 +6,7 @@ Requirements
 * Redis
 * pip
 * virtualenv
-* super
+* supervisor
 * libmysqlclient-dev or similar 
 
 
