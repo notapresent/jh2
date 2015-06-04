@@ -11,7 +11,7 @@ from jinja2.filters import do_truncate
 
 from helpers import group_concat
 from models import Scan, Record, Genre, RecordFlag, Image, scan_records
-
+from . import user_settings
 
 BATCH_SIZE = 10000
 
@@ -20,65 +20,19 @@ class Exporter(object)
     """
         Builds record sets for export
     """
-    
+    def __init__(self, session):
+        self.session = session
+        self.settings = user_settings.UserSettings(session)
+
     def generation_date(self):
         """
             Export set build date
         """
         return datetime.datetime.utcnow()
-    
-    def offers(self):
-        """
-            Offers for YML export
-        """
-        pass
-    
-    def rows(self):
-        """
-            Rows for table expo
-        """
-        pass
-    
-    
-
-class Builder(object):
-
-    def __init__(self, session):
-        self.session = session
-
-    def generation_date(self):
-        """
-            Returns catalog generation date
-        """
-        return datetime.datetime.utcnow()
-
-    def genres_list(self):
-        """
-            Returns list of exported genres
-        """
-        return (
-            self.session.query(Genre)
-                .order_by(Genre.id)
-                .filter(Genre.export_enabled.is_(True))
-                .all()
-        )
-
-    def offers(self, limit=None):
-        """
-            Generates a sequence of offers for all records in exported genres
-        """
-        scans = self.latest_scans()
-
-        for num, rec in enumerate(self.records(scans)):
-            if limit and num == limit:
-                break
-            else:
-                yield make_offer(rec)
 
     def latest_scans(self):
         """
-            Returns list of ids of last successful scans for each
-            export-enabled genre
+            List of ids of last successful scans for each export-enabled genre
         """
         subquery = (
             self.session.query(Scan.id)
@@ -96,6 +50,29 @@ class Builder(object):
         )
         return [scan_id for genre_id, scan_id in rows]
 
+
+    def offers(self):
+        """
+            Generates a sequence of offers for YML export
+        """
+        scans = self.latest_scans()
+        limit = self.settings['yml_export_limit']['value']
+
+        for num, rec in enumerate(self.records(scans)):
+            if limit and num == limit:
+                break
+            else:
+                yield make_offer(rec)
+
+
+    def rows(self):
+        """
+            Rows for table export
+        """
+        pass
+    
+    
+class Builder(object):
     def records(self, scan_ids):
         """
             Returns all records from scans in scan_ids, excluding the ones with

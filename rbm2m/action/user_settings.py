@@ -45,6 +45,12 @@ DEFAULT_SETTINGS = {
 <code>{notes}</code> - Примечания
 ''',
         },
+    'yml_export_limit': {
+            'title': 'Ограничение количества записей в YML',
+            'value': 0,
+            'data_type': 'string',
+            'description': '0 - без ограничений'
+        }
 }
 
 
