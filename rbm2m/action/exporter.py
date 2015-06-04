@@ -193,10 +193,23 @@ class TableExporter(Exporter):
         scans = self.latest_scans()
 
         for num, rec in enumerate(self.records(scans)):
-            if self.limit and num == self.limit:
-                break
+            yield self.make_row(rec)
 
-            yield self.make_offer(rec)
+    def make_row(self, rec):
+        """
+            Make table row from query result row
+        """
+
+        rec['price'] = self.make_price(rec['price'])
+        return rec
+
+    def make_price(self, price):
+        """
+            Calculate record price according to formula
+        """
+        formula = self.settings['formula_table']['value']
+        return eval(formula, {'x': price})
+
 
 def format_title(artist, title, fmt, max_length=50):
     """

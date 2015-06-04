@@ -12,7 +12,7 @@ DEFAULT_SETTINGS = {
             'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
         },
 
-    'formula_xls':
+    'formula_table':
         {
             'title': 'Формула рассчета цены в XLS',
             'value': 'x*60 if x < 1000 else x*60 + 10',

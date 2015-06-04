@@ -1,7 +1,7 @@
-<table>
+<table border="1">
     <tr>
-        <th>genre</th>
         <th>id</th>
+        <th>genre</th>
         <th>artist</th>
         <th>title</th>
         <th>label</th>
@@ -10,17 +10,17 @@
         <th>price</th>
         <th>notes</th>
     </tr>
-
+    {% for row in rows %}
     <tr>
-        <td>genre</td>
-        <td>id</td>
-        <td>artist</td>
-        <td>title</td>
-        <td>label</td>
-        <td>grade</td>
-        <td>format</td>
-        <td>price</td>
-        <td>notes</td>
+        <td>{{ row['id'] }}</td>
+        <td>{{ row['genre_title'] }}</td>
+        <td>{{ row['artist'] }}</td>
+        <td>{{ row['title'] }}</td>
+        <td>{{ row['label'] }}</td>
+        <td>{{ row['grade'] }}</td>
+        <td>{{ row['format'] }}</td>
+        <td>{{ row['price'] }}</td>
+        <td>{{ row['notes'] }}</td>
     </tr>
-
+    {% endfor %}
 </table>
