@@ -23,7 +23,7 @@ class Image(Base):
             Generate filename from id and base dir, with optional suffix
         """
         if suffix is None:
-            suffix = url_suffix(self.url)
+            suffix = normalize_jpg_suffix(url_suffix(self.url))
 
         strid = str(self.id).zfill(4)
         chunks = [strid[-2:], strid[-4:-2], "{}{}".format(strid, suffix)]
@@ -31,5 +31,16 @@ class Image(Base):
 
 
 def url_suffix(url):
+    """
+        Extract file extension from url
+    """
     path = urlparse.urlparse(url).path
-    return os.path.splitext(path)[1]
+    return os.path.splitext(path)[1].lower()
+
+def normalize_jpg_suffix(suffix):
+    """
+        returns transform '.jpe' and '.jpeg' to '.jpg'
+    """
+    if suffix in ['.jpeg', '.jpe']:
+        return '.jpg'
+    return suffix
