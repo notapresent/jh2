@@ -7,7 +7,8 @@ class GenreManager(BaseManager):
     __model__ = Genre
 
     def exported_list(self):
-        return (self.session.query(Genre)
-            .filter_by(Genre.export_enabled=True)
+        return (
+            self.session.query(Genre)
+            .filter(Genre.export_enabled.is_(True))
             .order_by(Genre.id)
         )

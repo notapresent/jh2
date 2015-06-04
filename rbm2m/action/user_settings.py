@@ -24,25 +24,24 @@ DEFAULT_SETTINGS = {
         {
             'title': 'Шаблон описания лота в YML',
             'value': '''
-{artist} - {title}, {format}<br>
+{{artist}} - {{title}}, {{format}}<br>
 <br>
-Артикул товара:{id}<br>
-Лейбл: {label}<br>
-Грейд: {grade}<br>
-Примечания: {notes}<br>
+Артикул товара:{{id}}<br>
+Лейбл: {{label}}<br>
+Грейд: {{grade}}<br>
+Примечания: {{notes}}<br>
 <br>
-Дополнительный блок описания
 ''',
             'data_type': 'text',
             'description': '''
 Доступные переменные:<br>
-<code>{id}</code> - ID<br>
-<code>{artist}</code> - Исполнитель<br>
-<code>{title}</code> - Название<br>
-<code>{format}</code> - Формат<br>
-<code>{label}</code> - Метка<br>
-<code>{grade}</code> - Грейд<br>
-<code>{notes}</code> - Примечания
+<code>{{id}}</code> - ID<br>
+<code>{{artist}}</code> - Исполнитель<br>
+<code>{{title}}</code> - Название<br>
+<code>{{format}}</code> - Формат<br>
+<code>{{label}}</code> - Метка<br>
+<code>{{grade}}</code> - Грейд<br>
+<code>{{notes}}</code> - Примечания
 ''',
         },
     'yml_export_limit': {

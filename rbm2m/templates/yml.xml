@@ -23,8 +23,8 @@
                     <price>{{ o.price }}</price>
                     <currencyId>RUR</currencyId>
                     <categoryId>{{ o.genre_id }}</categoryId>
-                    {% for url in o.images -%}
-                        <picture>{{ url }}</picture>
+                    {% for path in o.images -%}
+                        <picture>{{ url_for('.serve_media', path=path, _external=True) }}</picture>
                     {% endfor -%}
                     <store>false</store>
                     <pickup>false</pickup>
