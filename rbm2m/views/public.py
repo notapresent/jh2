@@ -45,9 +45,4 @@ def table():
 
 @bp.route('/media/<path:path>')
 def serve_media(path):
-    import os
-    ffn = os.path.join(current_app.config['MEDIA_DIR'], path)
-    print ffn, os.path.isfile(ffn)
-    print "Serving ", path, " from ", current_app.config['MEDIA_DIR']
     return send_from_directory(current_app.config['MEDIA_DIR'], path)
-

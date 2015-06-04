@@ -153,7 +153,6 @@ class YMLExporter(Exporter):
         offer['description'] = self.format_description(rec)
         offer['price'] = self.make_yml_price(rec['price'])
         offer['images'] = self.format_yml_images(rec['images'])
-        print offer
         return offer
 
     def format_description(self, rec):
