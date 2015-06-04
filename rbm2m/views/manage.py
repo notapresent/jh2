@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, current_app, Blueprint, send_from_directory
+from flask import render_template, current_app, Blueprint
 
 from ..action import (genre_manager, record_manager, scan_manager, export_manager,
                       user_settings)
@@ -45,12 +45,6 @@ def record_view(rec_id=None):
 
     return render_template('record_view.html', record=rec, FLAGS=record.FLAGS,
                            flag_names=flag_names, img_paths=img_paths)
-
-
-@bp.route('/media/<path:path>')
-def serve_media(path):
-    return send_from_directory(current_app.config['MEDIA_DIR'], path)
-
 
 @bp.route('/imports/')
 def import_list():

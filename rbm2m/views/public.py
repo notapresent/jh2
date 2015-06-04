@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_from_directory, current_app
 
 from ..webapp import db
-from ..action import export_manager, genre_manager, export
+from ..action import export_manager, genre_manager, exporter
 
 
 bp = Blueprint('public', __name__)
@@ -16,47 +16,34 @@ def yml():
     """
         YML export endpoint
     """
-    genman = genre_manager.GenreManager(db.session)
-    exporter = export.Exporter(session=db.session)
+    exp = exporter.YMLExporter(db.session)
+    exp.log_export(request.remote_addr, request.user_agent)
+
     ctx = {
-        'generation_date': exporter.generation_date(),
-        'genres': genman.exported_list(),
-        'offers': exporter.offers()
+        'generation_date': exp.generation_date(),
+        'genres': exp.category_list(),
+        'offers': exp.offers()
     }
 
-    exp = log_export('yml', request.remote_addr, request.user_agent)
-    message = "{} export #{} for {}@{} completed"
-    logger.info(message.format(exp.format, exp.id, exp.user_agent, exp.ip))
-
     return render_template('yml.xml', **ctx)
-
 
 @bp.route('/table')
 def table():
     """
-        HTML table export endpoint
+        Table export endpoint
     """
-    exporter = export.Exporter(session=db.session)
-    ctx = {
-        'generation_date': exporter.generation_date(),
-        'rows': exporter.tabrows()
-    }
+    exp = exporter.TableExporter(db.session)
+    exp.log_export(request.remote_addr, request.user_agent)
 
-    exp = log_export('table', request.remote_addr, request.user_agent)
-    message = "{} export #{} for {}@{} completed"
-    logger.info(message.format(exp.format, exp.id, exp.user_agent, exp.ip))
+    ctx = {
+        'genres': exp.category_list(),
+        'rows': exp.rows()
+    }
 
     return render_template('table.html', **ctx)
 
 
-def log_export(fmt, ip, user_agent):
-    """
-        Save export entry and return it
-    """
-    expman = export_manager.ExportManager(db.session)
-    expdata = {
-        'user_agent': user_agent,
-        'ip': ip,
-        'format': fmt
-    }
-    return expman.from_dict(expdata)
+@bp.route('/media/<path:path>')
+def serve_media(path):
+    return send_from_directory(current_app.config['MEDIA_DIR'], path)
+
