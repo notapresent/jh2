@@ -167,7 +167,7 @@ class YMLExporter(Exporter):
             Calculate lot price
         """
         formula = self.settings['formula_yml']['value']
-        return eval(formula, {'x': price})
+        return int(round(eval(formula, {'x': price})))
 
     def format_yml_images(self, image_ids):
         """
@@ -208,7 +208,7 @@ class TableExporter(Exporter):
             Calculate record price according to formula
         """
         formula = self.settings['formula_table']['value']
-        return eval(formula, {'x': price})
+        return int(round(eval(formula, {'x': price})))
 
 
 def format_title(artist, title, fmt, max_length=50):
