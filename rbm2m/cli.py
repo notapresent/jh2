@@ -44,7 +44,7 @@ def import_genres():
         Import genres from rbm and save in DB
     """
     session = make_session(engine)
-    genman = genre_manager(session)
+    genman = genre_manager.GenreManager(session)
     genman.import_genres()
     session.commit()
     click.echo('Genres imported')
