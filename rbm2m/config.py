@@ -27,8 +27,8 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('RBM2M_DATABASE_URI')
-    REDIS_URL = os.environ.get('RBM2M_REDIS_URI')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    REDIS_URL = os.environ.get('REDIS_URI')
 
 
 class DevelopmentConfig(Config):
