@@ -60,3 +60,5 @@ supervisord.conf
 media/
 logs/
 venv/
+
+supervisor.conf
