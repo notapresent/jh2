@@ -14,7 +14,7 @@ class Config(object):
     REDIS_URL = 'redis://@localhost:6379/0'
     RQ_QUEUE_NAME = 'default'
 
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8'    # noqa
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4'    # noqa
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
@@ -38,4 +38,4 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://rbm2m:rbm2m@localhost/rbm2m_test?charset=utf8'  # noqa
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://rbm2m:rbm2m@localhost/rbm2m_test?charset=utf8mb4'  # noqa
