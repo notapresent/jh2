@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 
+from rbm2m import middleware
+
+
 app_env = os.environ.get('RBM2M_ENV', 'Production')
 
 if app_env == 'Production':
@@ -11,6 +14,10 @@ if app_env == 'Production':
 from rbm2m.webapp import create_app
 
 app = create_app(app_env)
+app.wsgi_app = middleware.ReverseProxied(app.wsgi_app)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(
+        host=os.environ.get('IP', '0.0.0.0'),
+        port=int(os.environ.get('PORT', 8080))
+    )
