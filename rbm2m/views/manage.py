@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, current_app, Blueprint
+from flask import render_template, current_app, Blueprint, request
 
 from ..action import (genre_manager, record_manager, scan_manager, export_manager,
                       user_settings)
@@ -19,6 +19,17 @@ def check_auth():
 @bp.route('/')
 def home():
     return render_template('dashboard.html')
+
+
+
+@bp.route('/env')
+def env():
+    env_data = {}
+    env_data['Environment'] = request.environ
+    env_data['Configuration'] = current_app.config
+    env_data['Headers'] = request.headers
+
+    return render_template('env.html', data=env_data)
 
 
 @bp.route('/genre/')
