@@ -9,7 +9,7 @@ class Config(object):
     """
         Default configuration
     """
-    DEBUG = False
+    DEBUG = os.environ.get('DEBUG', False)
     TESTING = False
     REDIS_URL = 'redis://@localhost:6379/0'
     RQ_QUEUE_NAME = 'default'
