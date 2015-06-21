@@ -27,7 +27,7 @@ environment=SQLALCHEMY_DATABASE_URI='',REDIS_URL='',RBM2M_LOGIN='',RBM2M_PASSWOR
 
 
 [program:rbm2mweb]
-command=venv/bin/gunicorn wsgi:app --bind localhost:8001
+command=venv/bin/gunicorn wsgi:app --bind localhost:8001 --access-logfile - --worker-class 'gevent'
 process_name=%(program_name)s_%(process_num)02d
 user=rbm2m
 
