@@ -57,8 +57,6 @@ supervisord.conf
 
 .idea/
 
-media/
-logs/
 venv/
 
 supervisor.conf
