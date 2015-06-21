@@ -88,7 +88,10 @@
                             <img class="record_image"
                                  src="{{ url_for('public.serve_media', path=img.make_filename()) }}">
                         </a>
-                        <a href="{{ img.url }}">Оригинал</a> ({{ img.length|filesizeformat }})
+                        
+                        ({{ img.length|filesizeformat if img.length else 'Ошибка загрузки'}})
+                        <br>
+                        <a href="{{ img.url }}">Оригинал</a>
                     </div>
                     {% endfor %}
                 </td>
