@@ -1,4 +1,6 @@
 .PHONY: clean-pyc test run
+IP ?= '127.0.0.1'
+PORT ?= 8001
 
 all: clean-pyc test
 
@@ -6,10 +8,10 @@ test:
 	py.test tests examples
 
 serve:
-	gunicorn wsgi:app -c gunicorn_settings.py
+	gunicorn wsgi:app -c gunicorn_settings.py --bind $(IP):$(PORT)
 
 work:
-	python runworker.py
+	rqworker -q -c rqworker_settings
 
 run:
 	python wsgi.py& python runworker.py
