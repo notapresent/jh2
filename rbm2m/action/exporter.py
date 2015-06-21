@@ -166,7 +166,8 @@ class YMLExporter(Exporter):
             Calculate lot price
         """
         formula = self.settings['formula_yml']['value']
-        return int(round(eval(formula, {'x': price})))
+        price = eval(formula, {'x': price})
+        return int(round(price))
 
     def format_yml_images(self, image_ids):
         """

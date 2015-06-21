@@ -7,7 +7,7 @@ DEFAULT_SETTINGS = {
     'formula_yml':
         {
             'title': 'Формула рассчета цены в YML',
-            'value': '((x + x/5 + 2) * 1,07) * 60',
+            'value': '((x + x/5 + 2) * 1.07) * 60',
             'data_type': 'string',
             'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
         },
