@@ -79,15 +79,16 @@ class Scanner(object):
         scan = self.scan_manager.get(scan_id)
         scan.status = 'running'
         self.queue.enqueue('page_task', scan.id)
+        logger.info("Scan #{} for genre {} started".format(scan.id, scan.genre.title))
 
     def finish_scan(self, scan_id, status):
         """
             Set scan status and finish date
         """
-        logger.info("Scan #{} finished with status {}".format(scan_id, status))
         scan = self.scan_manager.get(scan_id)
         scan.status = status
         scan.finished_at = datetime.datetime.utcnow()
+        logger.info("Scan #{} finished with status {}".format(scan_id, status))
 
     def page_task(self, scan_id, page_no=None):
         """
@@ -122,5 +123,6 @@ class Scanner(object):
         """
             Download and save images for records in rec_ids
         """
+        logger.debug("Running image task for {} records".format(len(rec_ids)))
         imp = image_importer.ImageImporter(self.config, self.session)
         imp.run(rec_ids)
