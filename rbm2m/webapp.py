@@ -18,7 +18,7 @@ redis = FlaskRedis()
 def create_app(app_env):
     app = Flask(__name__)
     app.config.from_object('rbm2m.config.{}Config'.format(app_env))
-    setup_logging(app.config['LOGS_DIR'], 'web', app.debug)
+    setup_logging(app.debug)
     app.json_encoder = JSONEncoder
     db.init_app(app)
     basic_auth.init_app(app)

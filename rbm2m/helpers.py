@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import os
 import time
 from functools import wraps
@@ -7,8 +8,6 @@ from unicodedata import normalize
 import logging
 import logging.config
 from logging import StreamHandler, Formatter
-from logging.handlers import RotatingFileHandler
-
 
 
 from redis import StrictRedis
@@ -179,26 +178,16 @@ def slugify(text, delim=u'-'):
     return unicode(delim.join(result))
 
 
-def setup_logging(log_dir, component, debug=True):
+def setup_logging(debug=True):
+    level = logging.DEBUG if debug else logging.INFO
+
     applogger = logging.getLogger('rbm2m')
-
-    if debug:
-        applogger.setLevel(logging.DEBUG)
-        hnd = StreamHandler()
-        hnd.setFormatter(Formatter(
-            '%(name)s %(levelname)s: %(message)s'
-        ))
-        applogger.addHandler(hnd)
-
-    else:
-        applogger.setLevel(logging.WARNING)
-        filename = os.path.join(log_dir, '{}.log'.format(component))
-        hnd = RotatingFileHandler(filename, maxBytes=5000000, backupCount=5)
-        hnd.setFormatter(Formatter(
-            '%(asctime)s %(process)d %(name)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'
-        ))
-        applogger.addHandler(hnd)
+    applogger.setLevel(level)
+    hnd = StreamHandler()
+    hnd.setFormatter(Formatter(
+        '%(name)s %(levelname)s: %(message)s'
+    ))
+    applogger.addHandler(hnd)
 
     # Limit 3rd party package logging
     loggers = ['requests', 'sqlalchemy', 'rq']
