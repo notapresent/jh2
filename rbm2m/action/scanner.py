@@ -55,6 +55,7 @@ class Scanner(object):
 
         scan_dict = {'genre_id': genre_id, 'status': 'queued'}
         scan = self.scan_manager.from_dict(scan_dict)
+        self.session.commit()
         self.queue.enqueue('start_scan', scan.id)
 
     def abort_scan(self, scan_id):
