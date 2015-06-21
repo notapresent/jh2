@@ -4,10 +4,12 @@ import os
 from rbm2m import middleware
 
 
+base_dir = os.path.dirname(__file__)
+venv_path = os.path.join(base_dir, 'venv')
+
 app_env = os.environ.get('RBM2M_ENV', 'Production')
 
-if app_env == 'Production':
-    venv_path = os.path.join(os.path.dirname(__file__), 'venv')
+if app_env == 'Production' and os.path.isdir(venv_path):
     activate_this = os.path.join(venv_path, 'bin/activate_this.py')
     execfile(activate_this, dict(__file__=activate_this))
 
