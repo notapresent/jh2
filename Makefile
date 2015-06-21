@@ -6,7 +6,7 @@ test:
 	py.test tests examples
 
 serve:
-	python wsgi.py
+	gunicorn wsgi:app -c gunicorn_settings.py
 
 work:
 	python runworker.py

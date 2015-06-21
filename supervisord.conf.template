@@ -1,0 +1,26 @@
+[program:worker]
+user=rbm2m
+
+; %(here)s
+directory=/var/www/rbm2m
+environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='',RBM2M_PASSWORD=''
+command=/var/www/rbm2m/venv/bin/python /var/www/rbm2m/runworker.py
+process_name=%(program_name)s_%(process_num)02d
+
+; If you want to run more than one worker instance, increase this
+numprocs=2
+
+stderr_logfile=/var/www/rbm2m/logs/worker.error.log
+stderr_logfile_maxbytes=10MB
+stderr_logfile_backups=5
+
+[program:web]
+user=rbm2m
+directory=/var/www/rbm2m
+environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='',RBM2M_PASSWORD=''
+command=/var/www/rbm2m/venv/bin/gunicorn wsgi:app -c gunicorn_settings.py
+process_name=%(program_name)s_%(process_num)02d
+
+stderr_logfile=/var/www/rbm2m/logs/web.error.log
+stderr_logfile_maxbytes=10MB
+stderr_logfile_backups=5
