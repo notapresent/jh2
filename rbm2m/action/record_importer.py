@@ -54,16 +54,24 @@ class RecordImporter(object):
 
         self.update_record_count(page_no, scrape.rec_count)
         self._next_page = scrape.next_page
+
         self.process_records(scrape.records)
 
     def process_records(self, records):
         """
             Add existing records to scan and process new ones
         """
-        record_ids = [rec['id'] for rec in records]
-        record_ids = self.scan_manager.records_not_in_scan(self.scan.id, record_ids)
+        raw_record_ids = [rec['id'] for rec in records]
+
+        # First filter out all records already present in current scan
+        record_ids = self.scan_manager.records_not_in_scan(self.scan.id, raw_record_ids)
+        records = filter(lambda r: r['id'] in record_ids, records)
+
+        # find records already present in db
         old_records = self.record_manager.find_existing(record_ids)
         old_ids = [rec.id for rec in old_records]
+
+        # Add existing records to scan
         self.scan.records.extend(old_records)
 
         for rec_dict in records:
