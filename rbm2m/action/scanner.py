@@ -123,6 +123,6 @@ class Scanner(object):
         """
             Download and save images for records in rec_ids
         """
-        logger.debug("Running image task for {} records".format(len(rec_ids)))
         imp = image_importer.ImageImporter(self.config, self.session)
-        imp.run(rec_ids)
+        num_imported = imp.run(rec_ids)
+        logger.debug("Imported {} images for {} records".format(num_imported, len(rec_ids)))

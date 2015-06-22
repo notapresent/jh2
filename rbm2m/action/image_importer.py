@@ -42,6 +42,8 @@ class ImageImporter(object):
             img = self.image_manager.get(img_id)
             img.length = length
 
+        return len(saved)
+
     def make_dl_list(self, rec_image_urls):
         """
             Accepts dict {rec_id_1: ['img_url_1', 'img_url_2', ..], ...}
