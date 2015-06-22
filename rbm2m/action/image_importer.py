@@ -82,5 +82,4 @@ class ImageImporter(object):
             Mark record, identified by rec_id, with flag
         """
         recman = RecordManager(self.session)
-        rec = recman.get(rec_id)
-        rec.flags.append(flag)
+        recman.set_flag(rec_id, flag)

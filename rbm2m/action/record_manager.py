@@ -40,11 +40,17 @@ class RecordManager(BaseManager):
 
         return q.offset(offset).limit(50).all()
 
-    def toggle_flag(self, rec_id, flagname):
+    def toggle_flag(self, rec_id, flag_name):
         rec = self.get(rec_id)
-        flag = rec.flags.filter(RecordFlag.name == flagname).first()
+        flag = rec.flags.filter(RecordFlag.name == flag_name).first()
         if flag:
             rec.flags.remove(flag)
         else:
-            rec.flags.append(RecordFlag(name=flagname))
+            rec.flags.append(RecordFlag(name=flag_name))
         return True
+
+    def set_flag(self, rec_id, flag_name):
+        rec = self.get(rec_id)
+        flag = rec.flags.filter(RecordFlag.name == flag_name).first()
+        if not flag:
+            rec.flags.append(RecordFlag(name=flag_name))
