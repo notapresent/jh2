@@ -17,3 +17,4 @@ requests==2.7.0
 rq==0.5.1
 SQLAlchemy==1.0.4
 Werkzeug==0.10.4
+raven==5.3.1
