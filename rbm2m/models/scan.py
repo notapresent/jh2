@@ -19,8 +19,8 @@ SCAN_STATUSES = {
 scan_records = Table(
     'scan_records',
     Base.metadata,
-    Column('scan_id', Integer, ForeignKey('scans.id'), primary_key=True),
-    Column('record_id', Integer, ForeignKey('records.id'), primary_key=True)
+    Column('scan_id', Integer, ForeignKey('scans.id', ondelete='CASCADE'), primary_key=True),
+    Column('record_id', Integer, ForeignKey('records.id', ondelete='CASCADE'), primary_key=True)
 )
 
 
