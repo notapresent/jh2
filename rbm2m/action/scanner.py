@@ -104,7 +104,7 @@ class Scanner(object):
             imp.run(scan, page_no)
         except record_importer.RecordImportError as e:
             self.finish_scan(scan.id, 'failed')
-            logger.error("Page #{} of scan #{}: {}".format(page_no or 0, scan_id, e))
+            logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 0, scan_id, e))
             return
 
         if imp.has_images:
