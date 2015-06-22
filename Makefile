@@ -14,7 +14,7 @@ work:
 	rqworker -q -c rqworker_settings
 
 run:
-	python wsgi.py& python runworker.py
+	gunicorn wsgi:app -c gunicorn_settings.py --bind $(IP):$(PORT)& rqworker -q -c rqworker_settings
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
