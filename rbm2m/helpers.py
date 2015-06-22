@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys
 import os
 import time
 from functools import wraps
-import re
-from unicodedata import normalize
 import logging
 import logging.config
 from logging import StreamHandler, Formatter
@@ -19,7 +16,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask.json import JSONEncoder as BaseJSONEncoder
 
 from . import config
-from .util import to_unicode
 
 
 logger = logging.getLogger(__name__)
@@ -162,20 +158,6 @@ class JSONEncoder(BaseJSONEncoder):
         if isinstance(obj, JsonSerializer):
             return obj.to_json()
         return super(JSONEncoder, self).default(obj)
-
-
-
-_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
-
-
-def slugify(text, delim=u'-'):
-    """Generates an ASCII-only slug."""
-    result = []
-    for word in _punct_re.split(to_unicode(text.lower())):
-        word = normalize('NFKD', word).encode('ascii', 'ignore')
-        if word:
-            result.append(word)
-    return unicode(delim.join(result))
 
 
 def setup_logging(debug=True):
