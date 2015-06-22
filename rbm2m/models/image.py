@@ -2,7 +2,7 @@
 import os
 import urlparse
 
-from sqlalchemy import (Column, Integer, String, ForeignKey)
+from sqlalchemy import Column, Integer, String, ForeignKey, Index
 from sqlalchemy.orm import relationship, backref
 
 from .base import Base
@@ -28,6 +28,9 @@ class Image(Base):
         strid = str(self.id).zfill(4)
         chunks = [strid[-2:], strid[-4:-2], "{}{}".format(strid, suffix)]
         return os.path.join(*chunks)
+
+
+Index('ix_length', Image.length)
 
 
 def url_suffix(url):
