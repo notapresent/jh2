@@ -2,7 +2,7 @@
 import rq
 
 
-JOB_TIMEOUT = 300   # seconds
+JOB_TIMEOUT = 900   # seconds
 
 
 class TaskQueue(object):
