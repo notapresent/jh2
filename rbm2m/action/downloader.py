@@ -27,7 +27,7 @@ def fetch(url):
     except requests.RequestException as e:
         exc_type, exc_val, tb = sys.exc_info()
         notes = resp.text if resp else ''
-        dump_exception('parse', exc_type, exc_val, tb, notes)
+        dump_exception('download', exc_type, exc_val, tb, notes)
         raise DownloadError(e)
 
     else:
