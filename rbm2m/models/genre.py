@@ -2,7 +2,7 @@
 from sqlalchemy import (Column, Integer, String, Boolean)
 
 from .base import Base
-from ..helpers import JsonSerializer
+from rbm2m.models.base import JsonSerializer
 
 
 class Genre(Base, JsonSerializer):

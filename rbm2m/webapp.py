@@ -8,7 +8,8 @@ from flask.ext.basicauth import BasicAuth
 from flask.ext.redis import FlaskRedis
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from helpers import JSONEncoder, setup_logging
+from helpers import setup_logging
+from rbm2m.models.base import JSONEncoder
 
 db = SQLAlchemy()
 basic_auth = BasicAuth()

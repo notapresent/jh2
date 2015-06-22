@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import (Column, Integer, String, Text, DateTime, ForeignKey)
 from sqlalchemy.orm import relationship, backref
 
-from ..helpers import JsonSerializer
+from rbm2m.models.base import JsonSerializer
 from .base import Base
 
 FLAGS = {

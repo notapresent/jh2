@@ -6,8 +6,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .base import Base
-from ..helpers import JsonSerializer
-
+from rbm2m.models.base import JsonSerializer
 
 SCAN_STATUSES = {
     'success': 'Успешно завершен',
