@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from record_manager import RecordManager
 from scan_manager import ScanManager
 import scraper
+
+
+logger = logging.getLogger(__name__)
 
 
 class RecordImporter(object):
@@ -61,6 +66,7 @@ class RecordImporter(object):
         """
             Add existing records to scan and process new ones
         """
+        uniquify(records)
         raw_record_ids = [rec['id'] for rec in records]
 
         # First filter out all records already present in current scan
@@ -88,9 +94,10 @@ class RecordImporter(object):
         if has_images:
             self._has_images.append(rec_dict['id'])
 
-        record = self.record_manager.from_dict(rec_dict)
-        record.genre_id = self.scan.genre_id
-        return record
+        rec = self.record_manager.from_dict(rec_dict)
+        rec.genre_id = self.scan.genre_id
+        logger.debug("Added record #{} ({}/{})".format(rec.id, rec.artist, rec.title))
+        return rec
 
     def update_record_count(self, page_no, rec_count):
         """
@@ -98,6 +105,22 @@ class RecordImporter(object):
         """
         if page_no is None or page_no % 10 == 0:
             self.scan.est_num_records = rec_count
+
+
+def uniquify(records):
+    """
+        Remove records with duplicate ids from list. Modifies list in-place
+
+        :param records: list of records to uniquify
+        :return: None
+    """
+    seen = set()
+    for index, record in  enumerate(records):
+        if record['id'] in seen:
+            logger.warn("Duplicate record #{}, discarding".format(record['id']))
+            records.pop(index)
+        else:
+            seen.add(record['id'])
 
 
 class RecordImportError(Exception):
