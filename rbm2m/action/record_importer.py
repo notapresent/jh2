@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from record_manager import RecordManager
+from scan_manager import ScanManager
 import scraper
 
 
@@ -9,6 +10,7 @@ class RecordImporter(object):
         self.session = session
         self.scan = scan
         self._record_manager = None
+        self._scan_manager = None
         self._next_page = None
         self._has_images = []
 
@@ -18,6 +20,13 @@ class RecordImporter(object):
             self._record_manager = RecordManager(self.session)
 
         return self._record_manager
+
+    @property
+    def scan_manager(self):
+        if self._scan_manager is None:
+            self._scan_manager = ScanManager(self.session)
+
+        return self._scan_manager
 
     @property
     def has_images(self):
@@ -52,6 +61,7 @@ class RecordImporter(object):
             Add existing records to scan and process new ones
         """
         record_ids = [rec['id'] for rec in records]
+        record_ids = self.scan_manager.records_not_in_scan(self.scan.id, record_ids)
         old_records = self.record_manager.find_existing(record_ids)
         old_ids = [rec.id for rec in old_records]
         self.scan.records.extend(old_records)
