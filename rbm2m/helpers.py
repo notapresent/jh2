@@ -185,7 +185,7 @@ def setup_logging(debug=True):
     applogger.setLevel(level)
     hnd = StreamHandler()
     hnd.setFormatter(Formatter(
-        '%(name)s %(levelname)s: %(message)s'
+        '[%(asctime)s] %(name)s %(levelname)s: %(message)s'
     ))
     applogger.addHandler(hnd)
 
