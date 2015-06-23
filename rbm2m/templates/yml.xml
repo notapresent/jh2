@@ -23,9 +23,12 @@
                     <price>{{ o.price }}</price>
                     <currencyId>RUR</currencyId>
                     <categoryId>{{ o.genre_id }}</categoryId>
-                    {% for path in o.images -%}
-                        <picture>{{ url_for('.serve_media', path=path, _external=True) }}</picture>
-                    {% endfor -%}
+                    {% if o.images %}
+                        <picture>{{ url_for('.serve_media', path=o.images[0], _external=True) }}</picture>
+                        {% for img_path in o.images[1:] -%}
+                            <picture{{loop.index}}>{{ url_for('.serve_media', path=img_path, _external=True) }}</picture{{loop.index}}>
+                        {% endfor -%}
+                    {% endif %}
                     <store>false</store>
                     <pickup>false</pickup>
                     <delivery>false</delivery>
