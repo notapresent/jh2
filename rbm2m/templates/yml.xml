@@ -36,6 +36,8 @@
                     <title>{{ o.title }}</title>
                     <media>{{ o.format }}</media>
                     <param name="post_delivery_price">100</param>
+                    <param name="availability">На заказ</param>
+                    <param name="condition">{{ 'Новый' if o.grade=='Still Sealed' else 'б/у' }}</param>
                     <description>{{ o.description }}</description>
                 </offer>
             {% endfor %}
