@@ -97,7 +97,7 @@ class RecordImporter(object):
 
         rec = self.record_manager.from_dict(rec_dict)
         rec.genre_id = self.scan.genre_id
-        msg = to_str("Added record #{} ({}/{})".format(rec.id, rec.artist, rec.title))
+        msg = to_str("Added record #{}".format(rec.id))
         logger.debug(msg)
         return rec
 
