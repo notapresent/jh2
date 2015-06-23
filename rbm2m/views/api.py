@@ -2,24 +2,10 @@
 from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
-from ..action import stats, scanner, record_manager, genre_manager, user_settings
+from ..action import (stats, scanner, record_manager, genre_manager, user_settings,
+                      scan_manager)
 
 bp = Blueprint('api', __name__)
-
-
-def jsonified_route():
-    pass
-
-
-def route(self, rule, **options):
-    """Like :meth:`Flask.route` but for a blueprint.  The endpoint for the
-    :func:`url_for` function is prefixed with the name of the blueprint.
-    """
-    def decorator(f):
-        endpoint = options.pop("endpoint", f.__name__)
-        self.add_url_rule(rule, endpoint, f, **options)
-        return f
-    return decorator
 
 
 @bp.before_request
@@ -27,9 +13,6 @@ def check_auth():
     if not basic_auth.authenticate():
         return basic_auth.challenge()
 
-
-# TODO auto-jsonify all responses from this blueprint
-# see https://github.com/mattupstate/overholt/blob/master/overholt/api/__init__.py#L36-L51
 
 @bp.route('/stats')
 def get_stats():
@@ -105,3 +88,13 @@ def save_settings():
         settings[item['name']] = item['value']
 
     return jsonify({'success': True})
+
+
+@bp.route('/run_scheduled')
+def run_scheduled():
+    """
+        Run regular scheduled task
+    """
+    sc = scanner.Scanner(current_app.config, db.session, redis._redis_client)
+    rv = sc.tick()
+    return jsonify(rv)
