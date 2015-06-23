@@ -108,7 +108,7 @@ class Scanner(object):
             logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 1, scan_id, e))
             return
 
-        if imp.has_images and False:
+        if imp.has_images:
             imgjob = self.queue.enqueue('image_task', imp.has_images, at_front=True)
         else:
             imgjob = None
