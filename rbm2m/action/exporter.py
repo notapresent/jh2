@@ -149,7 +149,7 @@ class YMLExporter(Exporter):
             Generates offer for YML from result row dictionary
         """
         offer = rec.copy()
-        offer['title'] = format_title(rec['artist'], rec['title'], rec['format'])
+        offer['title'] = format_title(rec['title'], rec['format'])
         offer['description'] = self.format_description(rec)
         offer['price'] = self.make_yml_price(rec['price'])
         offer['images'] = self.format_yml_images(rec['images'])
@@ -211,13 +211,13 @@ class TableExporter(Exporter):
         return int(round(eval(formula, {'x': price})))
 
 
-def format_title(artist, title, fmt, max_length=50):
+def format_title(title, fmt, max_length=50):
     """
         Format offer title string according to format
-        {artist} - {title} {format}
+        {title} {format}
         truncating title if necessary
     """
-    title_maxlength = max_length - len("{} -  {}".format(artist, fmt))
+    title_maxlength = max_length - len(fmt) - 1
     truncated_title = do_truncate(title, title_maxlength)
-    return '{} - {} {}'.format(artist, truncated_title, fmt)
+    return '{} {}'.format(truncated_title, fmt)
 
