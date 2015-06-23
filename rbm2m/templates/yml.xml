@@ -26,7 +26,7 @@
                     {% if o.images %}
                         <picture>{{ url_for('.serve_media', path=o.images[0], _external=True) }}</picture>
                         {% for img_path in o.images[1:] -%}
-                            <picture{{loop.index}}>{{ url_for('.serve_media', path=img_path, _external=True) }}</picture{{loop.index}}>
+                            <param name="picture{{loop.index}}">{{ url_for('.serve_media', path=img_path, _external=True) }}</param>
                         {% endfor -%}
                     {% endif %}
                     <store>false</store>
@@ -35,6 +35,7 @@
                     <artist>{{ o.artist }}</artist>
                     <title>{{ o.title }}</title>
                     <media>{{ o.format }}</media>
+                    <param name="post_delivery_price">100</param>
                     <description>{{ o.description }}</description>
                 </offer>
             {% endfor %}
