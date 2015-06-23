@@ -50,7 +50,7 @@ class Scanner(object):
         """
             Enqueue new scan for specified genre
         """
-        if self.scan_manager.get_current_for_genre(genre_id):
+        if self.scan_manager.get_current_scans(genre_id):
             raise ScanError('Scan already queued')
 
         scan_dict = {'genre_id': genre_id, 'status': 'queued'}
@@ -108,7 +108,7 @@ class Scanner(object):
             logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 1, scan_id, e))
             return
 
-        if imp.has_images:
+        if imp.has_images and False:
             imgjob = self.queue.enqueue('image_task', imp.has_images, at_front=True)
         else:
             imgjob = None
@@ -127,3 +127,50 @@ class Scanner(object):
         imp = image_importer.ImageImporter(self.config, self.session)
         num_imported = imp.run(rec_ids)
         logger.debug("Imported {} images for {} records".format(num_imported, len(rec_ids)))
+
+    def tick(self):
+        """
+            Fail stalled scans (if any) and run next scan (if it's time to)
+        """
+        num_stalled = self.fail_stalled_scans()
+        scheduled = self.run_scheduled_scan()
+        logger.debug("Schedule task completed")
+        return {'stalled': num_stalled, 'scheduled': scheduled}
+
+    def run_scheduled_scan(self):
+        """
+            Run next scheduled scan
+        """
+        active_scans = self.scan_manager.get_current_scans()
+        if active_scans:
+            return False
+
+        genre = self.get_genre_to_scan()
+        if genre:
+            self.enqueue_scan(genre.id)
+
+        return genre is not None
+
+    def get_genre_to_scan(self):
+        """
+            Find imported genre for which there was no successful import
+            during update interval
+
+            :return: Genre or None
+        """
+        not_scanned = self.scan_manager.get_genre_with_no_scans()
+        if not_scanned:
+            return not_scanned
+
+        return self.scan_manager.get_genre_with_no_scans_in_24h()
+
+    def fail_stalled_scans(self):
+        """
+            Set status to 'failed' for all scans with no activity for specified interval
+        """
+        stalled = self.scan_manager.get_stalled_scans()
+        for scan in stalled:
+            scan.status = 'failed'
+            logger.warn("Scan #{} marked as failed due to inactivity".format(scan.id))
+
+        return len(stalled)
