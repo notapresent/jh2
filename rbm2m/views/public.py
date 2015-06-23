@@ -17,7 +17,7 @@ def yml():
         YML export endpoint
     """
     exp = exporter.YMLExporter(db.session)
-    exp.log_export(request.remote_addr, request.user_agent)
+    exp.log_export(client_ip(), request.user_agent)
 
     ctx = {
         'generation_date': exp.generation_date(),
@@ -46,3 +46,13 @@ def table():
 @bp.route('/media/<path:path>')
 def serve_media(path):
     return send_from_directory(current_app.config['MEDIA_DIR'], path)
+
+
+def client_ip():
+    """
+        Returns client ip address
+    """
+    if 'HTTP_X_REAL_IP' in request.environ:
+        return request.environ['HTTP_X_REAL_IP']
+
+    return request.remote_addr
