@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
-from sqlalchemy import (Column, Integer, String, DateTime, ForeignKey, Table)
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.hybrid import hybrid_property
 
@@ -39,6 +39,8 @@ class Scan(Base, JsonSerializer):
     started_at = Column(DateTime, nullable=False,
                         default=datetime.datetime.utcnow)
     finished_at = Column(DateTime, nullable=True)
+    last_action = Column(DateTime, nullable=True, server_default=func.now(),
+                         onupdate=func.current_timestamp())
     # Estimated number of records
     est_num_records = Column(Integer)
     status = Column(String(50), nullable=False)

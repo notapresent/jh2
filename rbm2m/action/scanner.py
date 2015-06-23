@@ -95,6 +95,7 @@ class Scanner(object):
             Import records from page and queue next page and/or image import
         """
         scan = self.scan_manager.get(scan_id)
+        scan.last_action = datetime.datetime.utcnow()
         if scan.status == 'aborted':     # or != 'running'
             return
 
@@ -104,7 +105,7 @@ class Scanner(object):
             imp.run(scan, page_no)
         except record_importer.RecordImportError as e:
             self.finish_scan(scan.id, 'failed')
-            logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 0, scan_id, e))
+            logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 1, scan_id, e))
             return
 
         if imp.has_images:
