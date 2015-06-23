@@ -4,6 +4,7 @@ import logging
 from record_manager import RecordManager
 from scan_manager import ScanManager
 import scraper
+from rbm2m.util import to_str
 
 
 logger = logging.getLogger(__name__)
@@ -96,7 +97,8 @@ class RecordImporter(object):
 
         rec = self.record_manager.from_dict(rec_dict)
         rec.genre_id = self.scan.genre_id
-        logger.debug("Added record #{} ({}/{})".format(rec.id, rec.artist, rec.title))
+        msg = to_str("Added record #{} ({}/{})".format(rec.id, rec.artist, rec.title))
+        logger.debug(msg)
         return rec
 
     def update_record_count(self, page_no, rec_count):
