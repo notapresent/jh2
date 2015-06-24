@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint, render_template, request, send_from_directory, current_app
 
 from ..webapp import db
-from ..action import export_manager, genre_manager, exporter
+from ..action import exporter
 
 
 bp = Blueprint('public', __name__)
