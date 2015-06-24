@@ -7,7 +7,7 @@ DEFAULT_SETTINGS = {
     'formula_yml':
         {
             'title': 'Формула рассчета цены в YML',
-            'value': '((x + x/5 + 2) * 1.07) * 60',
+            'value': '((x + x/5.0 + 2) * 1.07) * 60 if x<1000 else  ((x + x/2.0 + 2) * 1.07) * 60',
             'data_type': 'string',
             'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
         },
@@ -15,7 +15,7 @@ DEFAULT_SETTINGS = {
     'formula_table':
         {
             'title': 'Формула рассчета цены в XLS',
-            'value': 'x*60 if x < 1000 else x*60 + 10',
+            'value': '(x + x/5.0 + 2) * 60 if x<1000 else  (x + x/2.0 + 2) * 60',
             'data_type': 'string',
             'description': 'В переменной <code>x</code> исходная цена записи на rbm в USD'
         },
