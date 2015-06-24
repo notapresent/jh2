@@ -89,7 +89,10 @@ class Scanner(object):
         scan = self.scan_manager.get(scan_id)
         scan.status = status
         scan.finished_at = datetime.datetime.utcnow()
-        self.save_xls_files()
+
+        if status == 'success':
+            self.save_xls_files()
+
         logger.info("Scan #{} finished with status {}".format(scan_id, status))
 
     def save_xls_files(self):
