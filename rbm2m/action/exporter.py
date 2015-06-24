@@ -5,10 +5,12 @@
 from __future__ import unicode_literals
 import datetime
 import logging
+import os
 
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, and_
 import jinja2
 from jinja2.filters import do_truncate
+from openpyxl import Workbook
 
 from ..models import Scan, Record, Genre, RecordFlag, Image, scan_records
 from . import user_settings, export_manager
@@ -26,8 +28,9 @@ class Exporter(object):
     """
     fmt = 'base'
 
-    def __init__(self, session):
+    def __init__(self, session, filters=None):
         self.session = session
+        self.filters = filters
         self.settings = user_settings.UserSettings(session)
 
     def log_export(self, ip, user_agent):
@@ -75,7 +78,7 @@ class Exporter(object):
         """
         batch_no = 0
         while True:
-            records = (
+            query = (
                 self.session.query(
                     scan_records.c.record_id.label('id'),
                     Record.artist, Record.title,
@@ -94,7 +97,14 @@ class Exporter(object):
                     ~RecordFlag.name.in_(['skip', 'missing_images'])))
                 .order_by(scan_records.c.record_id)
                 .group_by(scan_records.c.record_id)
-                .offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all())
+            )
+
+            if self.filters:
+                for col_name, value in self.filters.items():
+                    col = getattr(Record, col_name)
+                    query = query.filter(col == value)
+
+            records = query.offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all()
 
             if not records:
                 break
@@ -192,7 +202,7 @@ class TableExporter(Exporter):
         """
         scans = self.latest_scans()
 
-        for num, rec in enumerate(self.records(scans)):
+        for rec in self.records(scans):
             yield self.make_row(rec)
 
     def make_row(self, rec):
@@ -211,6 +221,29 @@ class TableExporter(Exporter):
         return int(round(eval(formula, {'x': price})))
 
 
+
+class XLSXExporter(TableExporter):
+    def save(self, path):
+        wb = Workbook(write_only=True, optimized_write=True)
+        ws = wb.create_sheet()
+
+        header = [
+            'Артикул', 'Жанр', 'Формат',
+            'Исполнитель', 'Название', 'Лейбл',
+            'Состояние', 'Цена', 'Примечания'
+        ]
+        ws.append(header)
+
+        for row in self.rows():
+            ws.append([
+                row['id'], row['genre_title'], row['format'],
+                row['artist'], row['title'], row['label'],
+                row['grade'], row['price'], row['notes']
+            ])
+
+        wb.save(path)
+
+
 def format_title(title, fmt, max_length=50):
     """
         Format offer title string according to format
@@ -220,4 +253,3 @@ def format_title(title, fmt, max_length=50):
     title_maxlength = max_length - len(fmt) - 1
     truncated_title = do_truncate(title, title_maxlength)
     return '{} {}'.format(truncated_title, fmt)
-

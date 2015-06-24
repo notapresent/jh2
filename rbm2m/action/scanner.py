@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
 import logging
+import os
 
 import task_queue
 import scan_manager
 import record_importer
 import image_importer
-
+import exporter
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,19 @@ class Scanner(object):
         scan = self.scan_manager.get(scan_id)
         scan.status = status
         scan.finished_at = datetime.datetime.utcnow()
+        self.save_xls_files()
         logger.info("Scan #{} finished with status {}".format(scan_id, status))
+
+    def save_xls_files(self):
+        """
+            Save xls files for each format
+        :return:
+        """
+        formats = ['LP', '45', '12']
+        for fmt in formats:
+            fn = os.path.join(self.config.MEDIA_DIR, 'records-{}.xlsx'.format(fmt))
+            xe = exporter.XLSXExporter(self.session, filters={'format': fmt})
+            xe.save(fn)
 
     def page_task(self, scan_id, page_no=None):
         """
@@ -96,7 +109,7 @@ class Scanner(object):
         """
         scan = self.scan_manager.get(scan_id)
         scan.last_action = datetime.datetime.utcnow()
-        if scan.status == 'aborted':     # or != 'running'
+        if scan.status != 'running':
             return
 
         imp = record_importer.RecordImporter(self.session, scan)
