@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
-from sqlalchemy import (Column, Integer, String, Text, DateTime, ForeignKey)
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Index
 from sqlalchemy.orm import relationship, backref
 
 from rbm2m.models.base import JsonSerializer
@@ -54,3 +54,5 @@ class RecordFlag(Base):
     id = Column(Integer, primary_key=True)
     record_id = Column(Integer, ForeignKey(Record.id))
     name = Column(String(50), nullable=False)
+
+Index('ix_record_id_name', RecordFlag.record_id, RecordFlag.name)
