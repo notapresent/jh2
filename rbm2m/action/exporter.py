@@ -10,7 +10,7 @@ import os
 from sqlalchemy import func, or_, and_
 import jinja2
 from jinja2.filters import do_truncate
-from openpyxl import Workbook
+import xlsxwriter
 
 from ..models import Scan, Record, Genre, RecordFlag, Image, scan_records
 from . import user_settings, export_manager
@@ -224,24 +224,26 @@ class TableExporter(Exporter):
 
 class XLSXExporter(TableExporter):
     def save(self, path):
-        wb = Workbook(write_only=True, optimized_write=True)
-        ws = wb.create_sheet()
+        workbook = xlsxwriter.Workbook(path)
+        ws = workbook.add_worksheet()
 
         header = [
             'Артикул', 'Жанр', 'Формат',
             'Исполнитель', 'Название', 'Лейбл',
             'Состояние', 'Цена', 'Примечания'
         ]
-        ws.append(header)
+        ws.write_row(0, 0, header)
 
+        i = 1
         for row in self.rows():
-            ws.append([
+            ws.write_row(i, 0, [
                 row['id'], row['genre_title'], row['format'],
                 row['artist'], row['title'], row['label'],
                 row['grade'], row['price'], row['notes']
             ])
+            i += 1
 
-        wb.save(path)
+        workbook.close()
 
 
 def format_title(title, fmt, max_length=50):
