@@ -33,7 +33,7 @@ def table():
         Table export endpoint
     """
     exp = exporter.TableExporter(db.session)
-    exp.log_export(request.remote_addr, request.user_agent)
+    exp.log_export(client_ip(), request.user_agent)
 
     ctx = {
         'genres': exp.category_list(),
