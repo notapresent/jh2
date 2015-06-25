@@ -160,7 +160,7 @@ class YMLExporter(Exporter):
             Generates offer for YML from result row dictionary
         """
         offer = rec.copy()
-        offer['title'] = format_title(rec['title'], rec['format'])
+        offer['title'] = format_title(rec['title'])
         offer['description'] = self.format_description(rec)
         offer['price'] = self.make_yml_price(rec['price'])
         offer['images'] = self.format_yml_images(rec['images'])
@@ -294,12 +294,9 @@ class XLSExporter(TableExporter):
             sheet.write(row_no, idx, label=val)
 
 
-def format_title(title, fmt, max_length=50):
+def format_title(title, max_length=50):
     """
-        Format offer title string according to format
-        {title} {format}
-        truncating title if necessary
+        Truncate title if it is longer than max_length
     """
-    title_maxlength = max_length - len(fmt) - 1
-    truncated_title = do_truncate(title, title_maxlength)
-    return '{} {}'.format(truncated_title, fmt)
+    truncated_title = do_truncate(title, max_length)
+    return truncated_title
