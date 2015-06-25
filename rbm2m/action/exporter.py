@@ -253,6 +253,7 @@ class XLSExporter(TableExporter):
         """
             Add new sheet with a header row to workbook
         """
+        title = title.replace('/',' and ')
         sheet = self.workbook.add_sheet(title)
         self.write_row(sheet, 0, [
             'Артикул',
