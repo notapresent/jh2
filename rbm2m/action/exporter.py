@@ -254,8 +254,8 @@ class XLSExporter(TableExporter):
             Add new sheet with a header row to workbook
         """
         sheet = self.workbook.add_sheet(title)
-        write_row(sheet, 0, [
-            'Артикул', 'Жанр', 'Формат',
+        self.write_row(sheet, 0, [
+            'Артикул',
             'Исполнитель', 'Название', 'Лейбл',
             'Состояние', 'Цена', 'Примечания'
         ])
@@ -275,8 +275,8 @@ class XLSExporter(TableExporter):
 
             current_row = rowcounts.setdefault(g_id, 1)
 
-            write_row(worksheet, current_row, [
-                row['id'], row['genre_title'], row['format'],
+            self.write_row(worksheet, current_row, [
+                row['id'],
                 row['artist'], row['title'], row['label'],
                 row['grade'], row['price'], row['notes']
             ])
@@ -285,12 +285,12 @@ class XLSExporter(TableExporter):
         if sheets:
             self.workbook.save(path)
 
-def write_row(sheet, row_no, values):
-    """
-        Write row to XLS worksheet
-    """
-    for idx, val in enumerate(values):
-        sheet.write(row_no, idx, label=val)
+    def write_row(self, sheet, row_no, values):
+        """
+            Write row to XLS worksheet
+        """
+        for idx, val in enumerate(values):
+            sheet.write(row_no, idx, label=val)
 
 
 def format_title(title, fmt, max_length=50):
