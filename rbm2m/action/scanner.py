@@ -102,9 +102,13 @@ class Scanner(object):
         """
         formats = ['LP', '45', '12']
         for fmt in formats:
-            fn = os.path.join(self.config.MEDIA_DIR, 'records-{}.xlsx'.format(fmt))
-            xe = exporter.XLSXExporter(self.session, filters={'format': fmt})
-            xe.save(fn)
+            fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
+            xlsxexp = exporter.XLSXExporter(self.session, filters={'format': fmt})
+            xlsxexp.save(fn + '.xlsx')
+
+            xlsexp = exporter.XLSExporter(self.session, filters={'format': fmt})
+            xlsexp.save(fn + '.xls')
+
 
     def page_task(self, scan_id, page_no=None):
         """

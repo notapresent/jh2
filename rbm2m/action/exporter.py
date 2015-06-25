@@ -11,6 +11,7 @@ from sqlalchemy import func, or_, and_
 import jinja2
 from jinja2.filters import do_truncate
 from openpyxl import Workbook
+import xlwt
 
 from ..models import Scan, Record, Genre, RecordFlag, Image, scan_records
 from . import user_settings, export_manager
@@ -221,7 +222,6 @@ class TableExporter(Exporter):
         return int(round(eval(formula, {'x': price})))
 
 
-
 class XLSXExporter(TableExporter):
     def save(self, path):
         wb = Workbook(write_only=True, optimized_write=True)
@@ -242,6 +242,55 @@ class XLSXExporter(TableExporter):
             ])
 
         wb.save(path)
+
+
+class XLSExporter(TableExporter):
+    def __init__(self, session, filters):
+        super(XLSExporter, self).__init__(session, filters)
+        self.workbook = xlwt.Workbook()  # encoding='utf-8'
+
+    def add_sheet(self, title):
+        """
+            Add new sheet with a header row to workbook
+        """
+        sheet = self.workbook.add_sheet(title)
+        write_row(sheet, 0, [
+            'Артикул', 'Жанр', 'Формат',
+            'Исполнитель', 'Название', 'Лейбл',
+            'Состояние', 'Цена', 'Примечания'
+        ])
+        return sheet
+
+    def save(self, path):
+        sheets = {} # genre id: sheet
+        rowcounts = {}
+
+        for row in self.rows():
+            g_id, g_title = row['genre_id'], row['genre_title']
+
+            if g_id in sheets:
+                worksheet = sheets[g_id]
+            else:
+                worksheet = sheets[g_id] = self.add_sheet(g_title)
+
+            current_row = rowcounts.setdefault(g_id, 1)
+
+            write_row(worksheet, current_row, [
+                row['id'], row['genre_title'], row['format'],
+                row['artist'], row['title'], row['label'],
+                row['grade'], row['price'], row['notes']
+            ])
+            rowcounts[g_id] = current_row + 1
+
+        if sheets:
+            self.workbook.save(path)
+
+def write_row(sheet, row_no, values):
+    """
+        Write row to XLS worksheet
+    """
+    for idx, val in enumerate(values):
+        sheet.write(row_no, idx, label=val)
 
 
 def format_title(title, fmt, max_length=50):
