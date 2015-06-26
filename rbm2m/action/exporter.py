@@ -299,6 +299,6 @@ def format_title(title, artist, max_length=50):
     """
         Truncate title if it is longer than max_length
     """
-    max_title_length = max_length - len(artist) - 1
+    max_title_length = max_length - len(artist) - 2
     truncated = do_truncate(title, max_title_length, killwords=True, end='…')
     return truncated
