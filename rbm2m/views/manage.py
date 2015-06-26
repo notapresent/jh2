@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import glob
+import os
+
 from flask import render_template, current_app, Blueprint, request
 
-from ..action import (genre_manager, record_manager, scan_manager, export_manager,
-                      user_settings)
+from ..action import (genre_manager, record_manager, scan_manager,
+                      export_manager, user_settings)
 from ..webapp import basic_auth, db
 from ..models import record, scan
 
@@ -68,6 +71,12 @@ def import_list():
 @bp.route('/exports/')
 def export_list():
     expman = export_manager.ExportManager(db.session)
-    exports = expman.last_exports()
-    settings = user_settings.UserSettings(db.session)
-    return render_template('export_list.html', exports=exports, settings=settings)
+    mask  = current_app.config['MEDIA_DIR'] + '/*.xls*'
+    paths = glob.glob(mask)
+
+    ctx = {
+        'exports': expman.last_exports(),
+        'settings': user_settings.UserSettings(db.session),
+        'files': [os.path.basename(p) for p in paths]
+    }
+    return render_template('export_list.html', **ctx)

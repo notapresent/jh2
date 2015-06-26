@@ -8,14 +8,26 @@
         <form>
             <div class="row">
                 <div class="large-6 column">
-            <label for="link_yml">YML</label>
-            <input readonly id="link_yml" type="text" value="{{ url_for('public.yml', _external=True) }}">
-                    </div>
-                <div class="large-6 column">
-            <label for="link_xls">XLS</label>
-            <input readonly id="link_xls" type="text" value="{{ url_for('public.table', _external=True) }}">
-                    </div>
+                    <label for="link_yml">YML</label>
+                    <input readonly id="link_yml" type="text" value="{{ url_for('public.yml', _external=True) }}">
                 </div>
+                <div class="large-6 column">
+                    <label for="link_table">Источник данных для автообновляющихся таблиц</label>
+                    <input readonly id="link_table" type="text" value="{{ url_for('public.table', _external=True) }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-12 column">
+                    <label for="link_xls">XLS</label>
+                    <ul id="link_xls">
+                        {% for path in files %}
+                        <li>
+                            <a href="{{ url_for('public.serve_media', path=path) }}">{{ path }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </form>
 
         <h3>Настройки</h3>

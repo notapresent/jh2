@@ -107,7 +107,7 @@ class Scanner(object):
             xlsxexp.save(fn + '.xlsx')
 
             xlsexp = exporter.XLSExporter(self.session, filters={'format': fmt})
-            xlsexp.save(fn + '.xls')
+            xlsexp.save(fn + '.xlsx')
 
 
     def page_task(self, scan_id, page_no=None):
