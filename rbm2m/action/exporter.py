@@ -45,7 +45,7 @@ class Exporter(object):
             'format': self.fmt
         }
         exp = expman.from_dict(expdata)
-        message = "{} export #{} for {}@{} completed"
+        message = "{} export #{} for {}@{} started"
         logger.info(message.format(self.fmt, exp.id, user_agent, ip))
         return exp
 
