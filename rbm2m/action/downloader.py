@@ -9,7 +9,7 @@ from .debug import dump_exception
 
 HOST = 'http://www.recordsbymail.com/'
 GENRE_LIST_URL = '{host}browse.php'.format(host=HOST)
-SEARCH_URL = '{host}search.php?genre={genre_slug}&instock=1'
+SEARCH_URL = '{host}search.php?genre={genre_slug}&format=LP&instock=1'
 IMAGE_LIST_URL = '{host}php/getImageArray.php?item={rec_id}'
 TIMEOUTS = (3.05, 30)  # Connect, read
 
