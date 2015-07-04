@@ -27,7 +27,7 @@ def parse_page(html):
 
     except Exception as e:
         exc_type, exc_val, tb = sys.exc_info()
-        dump_exception('parse', exc_type, exc_val, tb, html)
+        dump_exception('parse_page', exc_type, exc_val, tb, html)
         raise ParseError(e)
 
     else:
@@ -54,7 +54,7 @@ def extract_records(soup):
             yield parse_record_block(item)
         except RecordParseFailed:
             exc_type, exc_val, tb = sys.exc_info()
-            dump_exception(exc_type, exc_val, tb, str(item))
+            dump_exception('parse_record', exc_type, exc_val, tb, str(item))
 
 
 def parse_record_block(tag):
