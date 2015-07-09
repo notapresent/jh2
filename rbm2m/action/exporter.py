@@ -101,9 +101,12 @@ class Exporter(object):
             )
 
             if self.filters:
+                print "Filters"
                 for col_name, value in self.filters.items():
                     col = getattr(Record, col_name)
                     query = query.filter(col == value)
+            else:
+                print "No filters"
 
             records = query.offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all()
 
@@ -126,8 +129,8 @@ class Exporter(object):
 class YMLExporter(Exporter):
     fmt = 'yml'
 
-    def __init__(self, session):
-        super(YMLExporter, self).__init__(session)
+    def __init__(self, session, filters):
+        super(YMLExporter, self).__init__(session, filters=filters)
         self.limit = self.export_limit()
         env = jinja2.Environment()
         template_string = self.settings['yml_description_template']['value']
