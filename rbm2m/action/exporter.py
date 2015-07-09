@@ -192,6 +192,9 @@ class YMLExporter(Exporter):
         if not image_ids:
             return rv
 
+        if len(image_ids) > 8:  # No more than 8 images for each record in YML
+            image_ids = image_ids[:8]
+
         for img_id in image_ids.replace(' ', '').split(','):
             rv.append(Image(id=img_id).make_filename('.jpg'))
 
