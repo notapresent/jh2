@@ -101,12 +101,9 @@ class Exporter(object):
             )
 
             if self.filters:
-                print "Filters"
                 for col_name, value in self.filters.items():
                     col = getattr(Record, col_name)
                     query = query.filter(col == value)
-            else:
-                print "No filters"
 
             records = query.offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all()
 
