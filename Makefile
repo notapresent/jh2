@@ -19,7 +19,7 @@ run:
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
+
 
 createdb:
 	@python -m rbm2m createdb
