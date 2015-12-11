@@ -12,6 +12,9 @@ import exporter
 logger = logging.getLogger(__name__)
 
 
+FORMATS = ['LP', '45', '12']
+
+
 class ScanError(Exception):
 
     """
@@ -91,23 +94,39 @@ class Scanner(object):
         scan.finished_at = datetime.datetime.utcnow()
 
         if status == 'success':
-            self.save_xls_files()
+            self.enqueue_export_tasks()
 
         logger.info("Scan #{} finished with status {}".format(scan_id, status))
 
-    def save_xls_files(self):
+    def enqueue_export_tasks(self):
         """
-            Save xls files for each format
-        :return:
+            Enqueue export files generation tasks
         """
-        formats = ['LP', '45', '12']
-        for fmt in formats:
+        if self.config.EXPORT_XLS:
+            self.queue.enqueue('save_xls_task')
+
+        if self.config.EXPORT_XLSX:
+            self.queue.enqueue('save_xlsx_task')
+
+        if self.config.EXPORT_CSV:
+            self.queue.enqueue('save_csv_task')
+
+
+    def save_xls_task(self):
+        for fmt in FORMATS:
+            fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
+            xlsexp = exporter.XLSExporter(self.session, filters={'format': fmt})
+            xlsexp.save(fn + '.xls')
+
+    def save_xlsx_task(self):
+        for fmt in FORMATS:
             fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
             xlsxexp = exporter.XLSXExporter(self.session, filters={'format': fmt})
             xlsxexp.save(fn + '.xlsx')
 
-            xlsexp = exporter.XLSExporter(self.session, filters={'format': fmt})
-            xlsexp.save(fn + '.xlsx')
+
+    def save_csv_task(self):
+        pass    # TODO
 
 
     def page_task(self, scan_id, page_no=None):

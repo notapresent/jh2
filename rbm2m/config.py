@@ -25,6 +25,9 @@ class Config(object):
     LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
     IMPORT_IMAGES = True
+    EXPORT_XLS = True
+    EXPORT_XLSX = True
+    EXPORT_CSV = True
 
 
 class ProductionConfig(Config):
