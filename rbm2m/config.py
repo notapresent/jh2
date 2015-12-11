@@ -24,6 +24,7 @@ class Config(object):
     MEDIA_DIR = os.path.join(BASE_DIR, 'media')
     LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
+    IMPORT_IMAGES = True
 
 
 class ProductionConfig(Config):
@@ -34,7 +35,7 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DEBUG = True
-
+    IMPORT_IMAGES = False
 
 class TestingConfig(Config):
     TESTING = True
