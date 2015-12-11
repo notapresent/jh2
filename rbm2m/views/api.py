@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
 from ..action import (stats, scanner, record_manager, genre_manager, user_settings,
-                      scan_manager)
+                      scan_manager, export_manager)
 
 bp = Blueprint('api', __name__)
 
@@ -98,3 +98,16 @@ def run_scheduled():
     sc = scanner.Scanner(current_app.config, db.session, redis._redis_client)
     rv = sc.tick()
     return jsonify(rv)
+
+
+@bp.route('/tidy')
+def tidy():
+    """
+        Run daily cleanup
+    """
+    sm = scan_manager.ScanManager(db.session)
+    sm.clean_up_old_scans()
+    em = export_manager.ExportManager(db.session)
+    em.clean_up_old_exports()
+
+    return jsonify({'success': True})

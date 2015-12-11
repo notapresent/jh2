@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from base_manager import BaseManager
 from ..models import Export
 
@@ -13,3 +15,10 @@ class ExportManager(BaseManager):
             .limit(50)
             .all()
         )
+
+    def clean_up_old_exports(self):
+        """
+            Delete all exports older than 30 days from now
+        """
+        threshold = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+        self.session.query(Export).filter(Export.started_at < threshold).delete()

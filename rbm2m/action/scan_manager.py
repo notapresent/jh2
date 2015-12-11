@@ -107,3 +107,12 @@ class ScanManager(BaseManager):
                 .filter(Scan.id.is_(None))
         )
         return q.first()
+
+    def clean_up_old_scans(self):
+        """
+            Delete all scans older than 7 days from now
+        """
+        threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+        self.session.query(Scan).filter(Scan.started_at < threshold).delete()
+
+
