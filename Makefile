@@ -20,6 +20,9 @@ clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 
+clean-data:
+	rm -rf media/*
+	rm -rf logs/*
 
 createdb:
 	@python -m rbm2m createdb
