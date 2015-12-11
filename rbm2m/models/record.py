@@ -9,9 +9,9 @@ from .base import Base
 
 FLAGS = {
     # Marks record that must not appear in export
-    'skip': {
-        'label': 'Не экспортировать',
-        'description': 'Исключить эту запись из экспорта в YML и таблицы',
+    'sold': {
+        'label': 'Продано',
+        'description': 'Запись продана и не попадает в экспорт',
         'css_class': '',
         'readonly': False
 

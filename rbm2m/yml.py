@@ -84,7 +84,7 @@ class Builder(object):
     def records(self, scan_ids):
         """
             Returns all records from scans in scan_ids, excluding the ones with
-            'sold' and 'skip' status
+            'sold' and 'missing_images' status
 
             :param scan_ids: list of scan ids
             :return: generator producing Record values
@@ -106,7 +106,7 @@ class Builder(object):
                 .filter(scan_records.c.scan_id.in_(scan_ids))
                 .filter(or_(
                     RecordFlag.name.is_(None),
-                    ~RecordFlag.name.in_(['skip', 'missing_images'])))
+                    ~RecordFlag.name.in_(['sold', 'missing_images'])))
                 .order_by(scan_records.c.record_id)
                 .group_by(scan_records.c.record_id)
                 .offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all())

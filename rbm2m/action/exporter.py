@@ -72,7 +72,7 @@ class Exporter(object):
     def records(self, scan_ids):
         """
             Returns all records from scans in scan_ids, excluding the ones with
-            'missing_images' and 'skip' status
+            'missing_images' and 'sold' status
 
             :param scan_ids: list of scan ids
             :return: generator producing Record values
@@ -95,7 +95,7 @@ class Exporter(object):
                 .filter(scan_records.c.scan_id.in_(scan_ids))
                 .filter(or_(
                     RecordFlag.name.is_(None),
-                    ~RecordFlag.name.in_(['skip', 'missing_images'])))
+                    ~RecordFlag.name.in_(['sold', 'missing_images'])))
                 .order_by(scan_records.c.record_id)
                 .group_by(scan_records.c.record_id)
             )
