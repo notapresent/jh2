@@ -36,7 +36,8 @@ def parse_page(html):
 
 def parse_image_list(json_data):
     try:
-        return json.loads(json_data)
+        urls = json.loads(json_data)
+        return list(set(urls))
     except ValueError as e:
         raise ParseError(e)
 
