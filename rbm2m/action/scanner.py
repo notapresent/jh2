@@ -94,38 +94,38 @@ class Scanner(object):
         scan.finished_at = datetime.datetime.utcnow()
 
         if status == 'success':
-            self.enqueue_export_tasks()
+            self.queue.enqueue('export_task')
 
         logger.info("Scan #{} finished with status {}".format(scan_id, status))
 
-    def enqueue_export_tasks(self):
-        """
-            Enqueue export files generation tasks
+    def export_task(self):
+        """q
+            Run exports
         """
         if self.config.EXPORT_XLS:
-            self.queue.enqueue('save_xls_task')
+            self.save_xls()
 
         if self.config.EXPORT_XLSX:
-            self.queue.enqueue('save_xlsx_task')
+            self.save_xlsx()
 
         if self.config.EXPORT_CSV:
-            self.queue.enqueue('save_csv_task')
+            self.save_csv()
 
 
-    def save_xls_task(self):
+    def save_xls(self):
         for fmt in FORMATS:
             fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
             xlsexp = exporter.XLSExporter(self.session, filters={'format': fmt})
             xlsexp.save(fn + '.xls')
 
-    def save_xlsx_task(self):
+    def save_xlsx(self):
         for fmt in FORMATS:
             fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
             xlsxexp = exporter.XLSXExporter(self.session, filters={'format': fmt})
             xlsxexp.save(fn + '.xlsx')
 
 
-    def save_csv_task(self):
+    def save_csv(self):
         pass    # TODO
 
 
