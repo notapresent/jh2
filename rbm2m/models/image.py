@@ -2,7 +2,7 @@
 import os
 import urlparse
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Index
+from sqlalchemy import Column, Integer, String, ForeignKey, Index, Boolean
 from sqlalchemy.orm import relationship, backref
 
 from .base import Base
@@ -14,7 +14,7 @@ class Image(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     record_id = Column(Integer, ForeignKey('records.id'), nullable=False)
     record = relationship('Record', backref=backref('images'))
-
+    is_cover = Column(Boolean, nullable=True, default=False)
     url = Column(String(512), nullable=False)
     length = Column(Integer)
 
@@ -30,6 +30,7 @@ class Image(Base):
         return os.path.join(*chunks)
 
 
+Index('ix_rec_id_cover', Image.record_id, Image.is_cover)
 Index('ix_length', Image.length)
 
 

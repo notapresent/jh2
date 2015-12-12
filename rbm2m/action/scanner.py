@@ -165,6 +165,7 @@ class Scanner(object):
         """
         imp = image_importer.ImageImporter(self.config, self.session)
         num_imported = imp.run(rec_ids)
+        imp.make_smaller_covers(rec_ids)
         logger.debug("Imported {} images for {} records".format(num_imported, len(rec_ids)))
 
     def tick(self):

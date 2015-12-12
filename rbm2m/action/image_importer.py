@@ -2,10 +2,11 @@
 import os
 import logging
 
-from image_manager import ImageManager
+from image_manager import ImageManager, make_thumbnail
 from record_manager import RecordManager
 import scraper
 
+from rbm2m.util import to_unicode, to_str
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +76,7 @@ class ImageImporter(object):
             elif img:
                 yield img
             else:
+                fields['is_cover'] = is_cover(rec_id, url)
                 yield self.image_manager.from_dict(fields)
 
     def mark_record(self, rec_id, flag):
@@ -83,3 +85,26 @@ class ImageImporter(object):
         """
         recman = RecordManager(self.session)
         recman.set_flag(rec_id, flag)
+
+
+    def make_smaller_covers(self, rec_ids):
+        """
+            Generate smaller cover image for each record in rec_ids
+        """
+        covers = self.image_manager.find_covers_for_records(rec_ids)
+
+        for c in covers:
+            fn = os.path.join(self.config.MEDIA_DIR, c.make_filename())
+            thumb_fn = os.path.join(self.config.MEDIA_DIR, c.make_filename('_small' + '.jpg'))
+            make_thumbnail(fn, thumb_fn)
+
+        logger.debug("Created {} small covers for {} records".format(covers.count(), len(rec_ids)))
+
+
+def is_cover(rec_id, img_url):
+    """
+        Returns trus if filename is the same as record id
+    """
+    filename = os.path.basename(img_url)
+    slug = os.path.splitext(filename)[0]
+    return str(rec_id) == to_str(slug)
