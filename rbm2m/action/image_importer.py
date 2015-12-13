@@ -86,7 +86,6 @@ class ImageImporter(object):
         recman = RecordManager(self.session)
         recman.set_flag(rec_id, flag)
 
-
     def make_smaller_covers(self, rec_ids):
         """
             Generate smaller cover image for each record in rec_ids
@@ -95,10 +94,12 @@ class ImageImporter(object):
 
         for c in covers:
             fn = os.path.join(self.config.MEDIA_DIR, c.make_filename())
-            thumb_fn = os.path.join(self.config.MEDIA_DIR, c.make_filename('_small' + '.jpg'))
+            thumb_fn = os.path.join(self.config.MEDIA_DIR,
+                                    c.make_filename('_small' + '.jpg'))
             make_thumbnail(fn, thumb_fn)
 
-        logger.debug("Created {} small covers for {} records".format(covers.count(), len(rec_ids)))
+        logger.debug("Created {} small covers for {} records".format(
+            covers.count(), len(rec_ids)))
 
 
 def is_cover(rec_id, img_url):

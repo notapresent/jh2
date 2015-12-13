@@ -227,6 +227,7 @@ class TableExporter(Exporter):
 
 
 class XLSXExporter(TableExporter):
+
     def save(self, path):
         wb = Workbook(write_only=True, optimized_write=True)
         ws = wb.create_sheet()
@@ -249,6 +250,7 @@ class XLSXExporter(TableExporter):
 
 
 class XLSExporter(TableExporter):
+
     def __init__(self, session, filters):
         super(XLSExporter, self).__init__(session, filters)
         self.workbook = xlwt.Workbook()  # encoding='utf-8'
@@ -257,7 +259,7 @@ class XLSExporter(TableExporter):
         """
             Add new sheet with a header row to workbook
         """
-        title = title.replace('/',' and ')
+        title = title.replace('/', ' and ')
         sheet = self.workbook.add_sheet(title)
         self.write_row(sheet, 0, [
             'Артикул',
@@ -267,7 +269,7 @@ class XLSExporter(TableExporter):
         return sheet
 
     def save(self, path):
-        sheets = {} # genre id: sheet
+        sheets = {}  # genre id: sheet
         rowcounts = {}
 
         for row in self.rows():

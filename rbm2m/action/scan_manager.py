@@ -50,7 +50,7 @@ class ScanManager(BaseManager):
     def records_not_in_scan(self, scan_id, rec_ids):
         result = (
             self.session.query(scan_records.c.record_id)
-            .filter(scan_records.c.scan_id==scan_id)
+            .filter(scan_records.c.scan_id == scan_id)
             .filter(scan_records.c.record_id.in_(rec_ids))
             .all()
         )
@@ -114,5 +114,3 @@ class ScanManager(BaseManager):
         """
         threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
         self.session.query(Scan).filter(Scan.started_at < threshold).delete()
-
-

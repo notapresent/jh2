@@ -18,7 +18,7 @@ def yml():
         YML export endpoint
     """
 
-    exp = exporter.YMLExporter(db.session, filters={'format':'LP'})
+    exp = exporter.YMLExporter(db.session, filters={'format': 'LP'})
     exp.log_export(client_ip(), request.user_agent)
     ctx = {
         'generation_date': exp.generation_date(),

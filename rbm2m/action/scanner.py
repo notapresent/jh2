@@ -111,7 +111,6 @@ class Scanner(object):
         if self.config.EXPORT_CSV:
             self.save_csv()
 
-
     def save_xls(self):
         for fmt in FORMATS:
             fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
@@ -124,10 +123,8 @@ class Scanner(object):
             xlsxexp = exporter.XLSXExporter(self.session, filters={'format': fmt})
             xlsxexp.save(fn + '.xlsx')
 
-
     def save_csv(self):
         pass    # TODO
-
 
     def page_task(self, scan_id, page_no=None):
         """
@@ -144,7 +141,8 @@ class Scanner(object):
             imp.run(scan, page_no)
         except record_importer.RecordImportError as e:
             self.finish_scan(scan.id, 'failed')
-            logger.error("Task failed: page #{} of scan #{}: {}".format(page_no or 1, scan_id, e))
+            logger.error("Task failed: page #{} of scan #{}: {}".format(
+                page_no or 1, scan_id, e))
             return
 
         if imp.has_images and self.config.IMPORT_IMAGES:
@@ -166,7 +164,8 @@ class Scanner(object):
         imp = image_importer.ImageImporter(self.config, self.session)
         num_imported = imp.run(rec_ids)
         imp.make_smaller_covers(rec_ids)
-        logger.debug("Imported {} images for {} records".format(num_imported, len(rec_ids)))
+        logger.debug("Imported {} images for {} records".format(
+            num_imported, len(rec_ids)))
 
     def tick(self):
         """

@@ -41,6 +41,7 @@ def url_suffix(url):
     path = urlparse.urlparse(url).path
     return os.path.splitext(path)[1].lower()
 
+
 def normalize_jpg_suffix(suffix):
     """
         returns transform '.jpe' and '.jpeg' to '.jpg'

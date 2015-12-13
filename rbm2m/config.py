@@ -40,6 +40,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     IMPORT_IMAGES = False
 
+
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://rbm2m:rbm2m@localhost/rbm2m_test?charset=utf8mb4'  # noqa

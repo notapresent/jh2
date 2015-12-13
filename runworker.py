@@ -13,10 +13,10 @@ if app_env == 'Production' and os.path.isdir(venv_path):
     execfile(activate_this, dict(__file__=activate_this))
 
 
-import redis
-from rq import Worker, Queue, Connection
+import redis                                # noqa
+from rq import Worker, Queue, Connection    # noqa
 
-from rbm2m.helpers import make_config
+from rbm2m.helpers import make_config       # noqa
 
 config = make_config()
 listen = [config.RQ_QUEUE_NAME]

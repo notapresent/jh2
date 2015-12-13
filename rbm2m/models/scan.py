@@ -20,8 +20,10 @@ SCAN_STATUSES = {
 scan_records = Table(
     'scan_records',
     Base.metadata,
-    Column('scan_id', Integer, ForeignKey('scans.id', ondelete='CASCADE'), primary_key=True),
-    Column('record_id', Integer, ForeignKey('records.id', ondelete='CASCADE'), primary_key=True)
+    Column('scan_id', Integer, ForeignKey(
+        'scans.id', ondelete='CASCADE'), primary_key=True),
+    Column('record_id', Integer, ForeignKey(
+        'records.id', ondelete='CASCADE'), primary_key=True)
 )
 
 
@@ -41,8 +43,9 @@ class Scan(Base, JsonSerializer):
                         default=datetime.datetime.utcnow)
     finished_at = Column(DateTime, nullable=True)
     last_action = Column(TIMESTAMP, nullable=True,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-                        onupdate=func.current_timestamp())
+                         server_default=text(
+                             'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+                         onupdate=func.current_timestamp())
     # Estimated number of records
     est_num_records = Column(Integer)
     status = Column(String(50), nullable=False)

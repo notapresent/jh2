@@ -13,10 +13,10 @@ class GenreManager(BaseManager):
             .filter(Genre.export_enabled.is_(True))
             .order_by(Genre.id)
         )
-    
+
     def import_genres(self):
         """
           Import genres from rbm2m
         """
         for genre_title in scraper.genre_list():
-          self.session.add(Genre(title=genre_title))
+            self.session.add(Genre(title=genre_title))

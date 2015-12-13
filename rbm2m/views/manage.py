@@ -24,7 +24,6 @@ def home():
     return render_template('dashboard.html')
 
 
-
 @bp.route('/env')
 def env():
     env_data = {}
@@ -60,6 +59,7 @@ def record_view(rec_id=None):
     return render_template('record_view.html', record=rec, FLAGS=record.FLAGS,
                            flag_names=flag_names, img_paths=img_paths)
 
+
 @bp.route('/imports/')
 def import_list():
     scanman = scan_manager.ScanManager(db.session)
@@ -71,7 +71,7 @@ def import_list():
 @bp.route('/exports/')
 def export_list():
     expman = export_manager.ExportManager(db.session)
-    mask  = current_app.config['MEDIA_DIR'] + '/*.xls*'
+    mask = current_app.config['MEDIA_DIR'] + '/*.xls*'
     paths = glob.glob(mask)
 
     ctx = {

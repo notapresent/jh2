@@ -13,7 +13,7 @@ if app_env == 'Production' and os.path.isdir(venv_path):
     activate_this = os.path.join(venv_path, 'bin/activate_this.py')
     execfile(activate_this, dict(__file__=activate_this))
 
-from rbm2m.webapp import create_app
+from rbm2m.webapp import create_app         # noqa
 
 app = create_app(app_env)
 app.wsgi_app = middleware.ReverseProxied(app.wsgi_app)

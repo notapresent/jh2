@@ -117,7 +117,7 @@ def uniquify(records):
         :return: None
     """
     seen = set()
-    for index, record in  enumerate(records):
+    for index, record in enumerate(records):
         if record['id'] in seen:
             logger.warn("Duplicate record #{}, discarding".format(record['id']))
             records.pop(index)
