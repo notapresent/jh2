@@ -99,7 +99,7 @@ class Scanner(object):
         logger.info("Scan #{} finished with status {}".format(scan_id, status))
 
     def export_task(self):
-        """q
+        """
             Run exports
         """
         if self.config.EXPORT_XLS:
