@@ -23,6 +23,41 @@ from rbm2m.util import to_str
 BATCH_SIZE = 10000
 CSV_BATCH_SIZE = 500
 
+
+MESHOK_CAT_MAP = {
+    5: 13037,
+    6: 2230,
+    7: 2230,
+    8: 2228,
+    9: 2230,
+    11: 2231,
+    12: 2230,
+    13: 13036,
+    14: 13291,
+    15: 13037,
+    16: 13291,
+    17: 2230,
+    18: 2228,
+    19: 13291,
+    20: 13038,
+    21: 2229,
+    22: 13291,
+    23: 13283,
+    24: 13041,
+    25: 13042,
+    26: 13283,
+    27: 13283,
+    28: 13291,
+    29: 13283,
+    30: 2230,
+    31: 2230,
+    32: 13045,
+    33: 13291,
+    34: 13291,
+    35: 13043,
+    36: 13043
+}
+
 logger = logging.getLogger(__name__)
 
 
@@ -321,7 +356,7 @@ class CSVExporter(TableExporter):
             row = [
                 'F',
                 '{} ({})'.format(title, rec['grade']),
-                '-',    # TODO код отдела
+                MESHOK_CAT_MAP.get(rec['genre_id']),
                 'новый' if rec['grade'] == 'Still Sealed' else 'б/у',
                 rec['price'],
                 '30',
