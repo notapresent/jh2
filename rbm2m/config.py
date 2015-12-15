@@ -33,12 +33,18 @@ class Config(object):
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     REDIS_URL = os.environ.get('REDIS_URL')
-
+    MEDIA_BASEURL = 'http://polden-music.ru/rbm2m/public/media'
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DEBUG = True
-    IMPORT_IMAGES = False
+    MEDIA_BASEURL = os.environ.get('MEDIA_BASEURL')
+
+    IMPORT_IMAGES = True
+
+    EXPORT_XLS = True
+    EXPORT_XLSX = True
+    EXPORT_CSV = True
 
 
 class TestingConfig(Config):

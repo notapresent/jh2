@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 import datetime
 import logging
 import os
+import csv
+import itertools
 
 from sqlalchemy import func, or_, and_
 import jinja2
@@ -16,9 +18,10 @@ import xlwt
 from ..models import Scan, Record, Genre, RecordFlag, Image, scan_records
 from . import user_settings, export_manager
 from rbm2m.action import genre_manager
+from rbm2m.util import to_str
 
 BATCH_SIZE = 10000
-
+CSV_BATCH_SIZE = 500
 
 logger = logging.getLogger(__name__)
 
@@ -300,6 +303,104 @@ class XLSExporter(TableExporter):
             sheet.write(row_no, idx, label=val)
 
 
+class CSVExporter(TableExporter):
+    HEADER = ['Тип продажи', 'Наименование', 'Код отдела', 'Состояние товара', 'Фиксированная цена',
+        'Продолжительность', 'Доставка по городу', 'Доставка по стране', 'Повторные торги', 'Описание', 'Метки',
+        'Уведомления', 'URL картинки']
+    DESC_FMT = '<b>{} - {}</b><br>Label: {}<br>Состояние: {}Дополнительно: {}, {}'
+
+    def save(self, basepath):
+        counter = 0
+        rows = self.rows()
+        chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
+
+        def make_row(rec):
+            maxlength = 100 - 3 - len(rec['grade'])
+            title = '{} - {}'.format(rec['title'], rec['artist'])
+            title = do_truncate(title, maxlength, killwords=True, end='…')
+            row = [
+                'F',
+                '{} ({})'.format(title, rec['grade']),
+                '-',    # TODO код отдела
+                'новый' if rec['grade'] == 'Still Sealed' else 'б/у',
+                rec['price'],
+                '30',
+                '0',
+                '250',
+                '0',
+                self.DESC_FMT.format(rec['artist'], rec['title'], rec['label'], rec['grade'], rec['format'], rec['notes']),
+                '{},{}'.format(rec['artist'].replace(',',''), rec['title'].replace(',.','')),
+                'Y',
+                cover_url(rec['image_id'])
+            ]
+            return row
+
+        while chunk:
+            filename = "{}-{}.csv".format(basepath, counter)
+            self.save_file(filename, map(make_row, chunk))
+            chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
+            counter += 1
+            print counter
+
+    def save_file(self, filename, rows):
+        with open(filename, 'wb') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(map(to_str, self.HEADER))
+
+            for row in rows:
+                row_ = [to_str(f) for f in row]
+                writer.writerow(row_)
+
+    def records(self, scan_ids):
+        """
+            Returns all records from scans in scan_ids, excluding the ones with
+            'missing_images' and 'sold' status
+
+            :param scan_ids: list of scan ids
+            :return: generator producing Record values
+        """
+        batch_no = 0
+        while True:
+            query = (
+                self.session.query(
+                    scan_records.c.record_id.label('id'),
+                    Record.artist, Record.title,
+                    Record.label, Record.notes, Record.grade, Record.format,
+                    Record.price, Record.genre_id,
+                    Genre.title.label('genre_title'),
+                    Image.id.label('image_id')
+                )
+                .join(Record, Record.id == scan_records.c.record_id)
+                .join(Genre, Genre.id == Record.genre_id)
+                .outerjoin(Image, and_(Image.record_id == scan_records.c.record_id,
+                    Image.is_cover.is_(True)))
+                .outerjoin(RecordFlag,
+                           RecordFlag.record_id == scan_records.c.record_id)
+                .filter(scan_records.c.scan_id.in_(scan_ids))
+                .filter(or_(
+                    RecordFlag.name.is_(None),
+                    ~RecordFlag.name.in_(['sold', 'missing_images'])))
+                .order_by(scan_records.c.record_id)
+                .group_by(scan_records.c.record_id)
+            )
+
+            if self.filters:
+                for col_name, value in self.filters.items():
+                    col = getattr(Record, col_name)
+                    query = query.filter(col == value)
+
+            records = query.offset(batch_no * BATCH_SIZE).limit(BATCH_SIZE).all()
+
+            if not records:
+                break
+
+            for row in records:
+                yield dict(zip(row.keys(), row))
+
+            batch_no += 1
+
+
+
 def format_title(title, artist, max_length=50):
     """
         Truncate title if it is longer than max_length
@@ -307,3 +408,13 @@ def format_title(title, artist, max_length=50):
     max_title_length = max_length - len(artist) - 2
     truncated = do_truncate(title, max_title_length, killwords=True, end='…')
     return truncated
+
+def cover_url(img_id):
+    """
+        Return small cover path
+    """
+    if not img_id:
+        return None
+    path = Image(id=img_id).make_filename('_small.jpg')
+    baseurl = os.environ.get('MEDIA_BASEURL')
+    return baseurl + '/' + path

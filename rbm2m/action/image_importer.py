@@ -95,7 +95,7 @@ class ImageImporter(object):
         for c in covers:
             fn = os.path.join(self.config.MEDIA_DIR, c.make_filename())
             thumb_fn = os.path.join(self.config.MEDIA_DIR,
-                                    c.make_filename('_small' + '.jpg'))
+                                    c.make_filename('_small.jpg'))
             make_thumbnail(fn, thumb_fn)
 
         logger.debug("Created {} small covers for {} records".format(
