@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import logging
+import sys
+
 import click
 from redis import StrictRedis
 
@@ -7,6 +10,10 @@ from .models import Genre
 from rbm2m.action import scraper
 from .action import user_settings, genre_manager, image_manager
 from helpers import make_session, make_config, make_engine
+
+
+logging.basicConfig(stream=sys.stdout)
+
 
 config = make_config()
 engine = make_engine(config)
