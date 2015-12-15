@@ -357,7 +357,7 @@ class CSVExporter(TableExporter):
                 'F',
                 '{} ({})'.format(title, rec['grade']),
                 MESHOK_CAT_MAP.get(rec['genre_id']),
-                'новый' if rec['grade'] == 'Still Sealed' else 'б/у',
+                'Y' if rec['grade'] == 'Still Sealed' else 'N',
                 rec['price'],
                 '30',
                 '0',
