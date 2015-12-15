@@ -35,6 +35,7 @@ class ProductionConfig(Config):
     REDIS_URL = os.environ.get('REDIS_URL')
     MEDIA_BASEURL = 'http://polden-music.ru/rbm2m/public/media'
 
+
 class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DEBUG = True

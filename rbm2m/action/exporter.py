@@ -452,4 +452,4 @@ def cover_url(img_id):
         return None
     path = Image(id=img_id).make_filename('_small.jpg')
     baseurl = os.environ.get('MEDIA_BASEURL')
-    return baseurl + '/' + path
+    return "{}/{}".format(baseurl, path)
