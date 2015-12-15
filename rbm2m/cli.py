@@ -5,7 +5,7 @@ from redis import StrictRedis
 from rbm2m.models.base import Base
 from .models import Genre
 from rbm2m.action import scraper
-from .action import user_settings, genre_manager
+from .action import user_settings, genre_manager, image_manager
 from helpers import make_session, make_config, make_engine
 
 config = make_config()
@@ -70,3 +70,17 @@ def reset_settings():
     settings.reset()
     session.commit()
     click.echo('User settings reset to default values')
+
+
+@main.command()
+def make_thumbnails():
+    """
+        Generate missing thumbnails for images
+    """
+    conf = make_config()
+    session = make_session(engine)
+
+    im = image_manager.ImageManager(session)
+    generated = im.make_thumbnails(conf.MEDIA_DIR)
+
+    click.echo('Generated thumbnails for {} images'.format(generated))
