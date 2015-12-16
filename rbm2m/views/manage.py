@@ -71,12 +71,15 @@ def import_list():
 @bp.route('/exports/')
 def export_list():
     expman = export_manager.ExportManager(db.session)
-    mask = current_app.config['MEDIA_DIR'] + '/*.xls*'
-    paths = glob.glob(mask)
+
+    filelists = {}
+    for ext in ['xls', 'xlsx', 'csv']:
+        paths = glob.glob('{}/*.{}'.format(current_app.config['MEDIA_DIR'], ext))
+        filelists[ext] = [os.path.basename(p) for p in paths]
 
     ctx = {
         'exports': expman.last_exports(),
         'settings': user_settings.UserSettings(db.session),
-        'files': [os.path.basename(p) for p in paths]
+        'files': filelists
     }
     return render_template('export_list.html', **ctx)

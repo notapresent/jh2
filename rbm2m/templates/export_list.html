@@ -17,16 +17,37 @@
                 </div>
             </div>
             <div class="row">
-                <div class="large-12 column">
-                    <label for="link_xls">XLS</label>
-                    <ul id="link_xls">
-                        {% for path in files %}
+                <div class="large-6 column">
+                    <label for="link_csv">CSV</label>
+                    <ul id="link_csv">
+                        {% for path in files.csv %}
                         <li>
                             <a href="{{ url_for('public.serve_media', path=path) }}">{{ path }}</a>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
+
+                <div class="large-6 column">
+                    <label for="link_xlsx">XLSX</label>
+                    <ul id="link_xlsx">
+                        {% for path in files.xlsx %}
+                        <li>
+                            <a href="{{ url_for('public.serve_media', path=path) }}">{{ path }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <label for="link_xls">XLS</label>
+                    <ul id="link_xls">
+                        {% for path in files.xls %}
+                        <li>
+                            <a href="{{ url_for('public.serve_media', path=path) }}">{{ path }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
             </div>
         </form>
 
