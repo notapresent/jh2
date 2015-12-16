@@ -359,8 +359,10 @@ class CSVExporter(TableExporter):
     DESC_FMT = '<b>{} - {}</b><br>Label: {}<br>Состояние: {}<br>Дополнительно: {}, {}<br>#{}'
 
     def save(self, basepath):
+        self.delete_old_csvs(basepath)
         counter = 0
-        chunk = list(itertools.islice(self.rows(), CSV_BATCH_SIZE))
+        rows = self.rows()
+        chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
 
         def make_row(rec):
             maxlength = 90 - 5 - len(rec['grade'])
@@ -390,10 +392,9 @@ class CSVExporter(TableExporter):
             self.save_file(filename, map(make_row, chunk))
             chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
             counter += 1
-            print counter
 
     def delete_old_csvs(self, basepath):
-        fns = glob.glob("{}-*.csv")
+        fns = glob.glob("{}-*.csv".format(basepath))
         for fn in fns:
             os.unlink(fn)
 
