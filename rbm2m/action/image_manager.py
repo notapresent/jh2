@@ -29,6 +29,7 @@ class ImageManager(BaseManager):
             Generate all missing small images
         """
         chunk_size = 1000
+
         def get_chunk(offset, size=chunk_size):
             return (
                 self.session.query(Image)
@@ -41,7 +42,7 @@ class ImageManager(BaseManager):
         chunk_no = 0
         generated = 0
 
-        chunk = get_chunk(chunk_no*chunk_size)
+        chunk = get_chunk(chunk_no * chunk_size)
 
         while chunk.count():
 
@@ -54,7 +55,7 @@ class ImageManager(BaseManager):
                     generated += 1
 
             chunk_no += 1
-            chunk = get_chunk(chunk_no*chunk_size)
+            chunk = get_chunk(chunk_no * chunk_size)
 
         return generated
 

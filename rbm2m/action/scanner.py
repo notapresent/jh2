@@ -128,7 +128,6 @@ class Scanner(object):
         csvexp = exporter.CSVExporter(self.session, filters={'format': 'LP'})
         csvexp.save(fp)
 
-
     def page_task(self, scan_id, page_no=None):
         """
             Import records from page and queue next page and/or image import

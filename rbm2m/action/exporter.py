@@ -9,6 +9,7 @@ import os
 import csv
 import itertools
 import re
+import glob
 
 from sqlalchemy import func, or_, and_
 import jinja2
@@ -359,8 +360,7 @@ class CSVExporter(TableExporter):
 
     def save(self, basepath):
         counter = 0
-        rows = self.rows()
-        chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
+        chunk = list(itertools.islice(self.rows(), CSV_BATCH_SIZE))
 
         def make_row(rec):
             maxlength = 90 - 5 - len(rec['grade'])
@@ -378,7 +378,7 @@ class CSVExporter(TableExporter):
                 # '250',
                 # '0',
                 self.DESC_FMT.format(rec['artist'], rec['title'], rec['label'], rec['grade'], rec['format'],
-                    rec['notes'], rec['id']),
+                                     rec['notes'], rec['id']),
                 tags,
                 # 'Y',
                 cover_url(rec['image_id'])
@@ -391,6 +391,11 @@ class CSVExporter(TableExporter):
             chunk = list(itertools.islice(rows, CSV_BATCH_SIZE))
             counter += 1
             print counter
+
+    def delete_old_csvs(self, basepath):
+        fns = glob.glob("{}-*.csv")
+        for fn in fns:
+            os.unlink(fn)
 
     def save_file(self, filename, rows):
         with open(filename, 'wb') as csvfile:
@@ -427,7 +432,7 @@ class CSVExporter(TableExporter):
                 .join(Record, Record.id == scan_records.c.record_id)
                 .join(Genre, Genre.id == Record.genre_id)
                 .outerjoin(Image, and_(Image.record_id == scan_records.c.record_id,
-                    Image.is_cover.is_(True)))
+                                       Image.is_cover.is_(True)))
                 .outerjoin(RecordFlag,
                            RecordFlag.record_id == scan_records.c.record_id)
                 .filter(scan_records.c.scan_id.in_(scan_ids))
