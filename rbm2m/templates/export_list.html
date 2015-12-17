@@ -20,7 +20,7 @@
                 <div class="large-6 column">
                     <label for="link_csv">CSV</label>
                     <ul id="link_csv">
-                        {% for path in files.csv %}
+                        {% for path in files.csv|sort %}
                         <li>
                             <a href="{{ url_for('public.serve_media', path=path) }}">{{ path }}</a>
                         </li>
