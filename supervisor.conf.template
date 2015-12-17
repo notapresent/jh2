@@ -3,7 +3,8 @@ user=rbm2m
 
 ; %(here)s
 directory=/var/www/rbm2m
-environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='',RBM2M_PASSWORD='',SENTRY_DSN=''
+environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='root',RBM2M_PASSWORD='toor',SENTRY_DSN='',MEDIA_BASEURL='http://localhost/public/media'
+
 command=/var/www/rbm2m/venv/bin/rqworker -q -c rqworker_settings
 process_name=%(program_name)s_%(process_num)02d
 
@@ -17,12 +18,11 @@ stderr_logfile_backups=5
 [program:web]
 user=rbm2m
 directory=/var/www/rbm2m
-environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='',RBM2M_PASSWORD='',SENTRY_DSN=''
-command=/var/www/rbm2m/venv/bin/gunicorn wsgi:app -c gunicorn_settings.py
+environment=SQLALCHEMY_DATABASE_URI='mysql+mysqldb://rbm2m:rbm2m@127.0.0.1/rbm2m?charset=utf8mb4',REDIS_URL='redis://@localhost:6379/0',RBM2M_LOGIN='root',RBM2M_PASSWORD='root',SENTRY_DSN='',MEDIA_BASEURL='http://localhost/public/media'
+
+command=/var/www/rbm2m/venv/bin/gunicorn wsgi:app --bind 127.0.0.1:8001 -c gunicorn_settings.py
 process_name=%(program_name)s_%(process_num)02d
 
 stderr_logfile=/var/www/rbm2m/logs/web.error.log
 stderr_logfile_maxbytes=10MB
 stderr_logfile_backups=5
-
-
