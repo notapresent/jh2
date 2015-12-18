@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, current_app, request
 
 from ..webapp import db, redis, basic_auth
 from ..action import (stats, scanner, record_manager, genre_manager, user_settings,
-                      scan_manager, export_manager)
+                      scan_manager, export_manager, debug)
 
 bp = Blueprint('api', __name__)
 
@@ -109,5 +109,6 @@ def tidy():
     sm.clean_up_old_scans()
     em = export_manager.ExportManager(db.session)
     em.clean_up_old_exports()
-
+    dumps_glob = "{}/*.html".format(current_app.config['LOGS_DIR'])
+    debug.clean_old_dumps(dumps_glob)
     return jsonify({'success': True})

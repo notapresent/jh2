@@ -4,6 +4,7 @@ import os
 import re
 import traceback
 from unicodedata import normalize
+import glob
 
 from rbm2m.util import to_unicode
 from rbm2m.helpers import make_config
@@ -49,3 +50,17 @@ def dump_exception(basename, exc_type, exc_val, tb, notes=''):
     dump = DUMP_TEMPLATE.format(exc_type, exc_val, traceback.format_exc(tb), notes)
     with open(filepath, 'w') as f:
         f.write(dump)
+
+
+def clean_old_dumps(glob_pattern, maxage=datetime.timedelta(days=7)):
+    """
+        Delete old error dumps
+    """
+    dumps = glob.glob(glob_pattern)
+    now = datetime.datetime.now()
+    for file in dumps:
+        filename = os.path.realpath(file)
+        timestamp = os.path.getmtime(filename)
+
+        if datetime.datetime.fromtimestamp(timestamp) < now - maxage:
+            os.unlink(filename)
