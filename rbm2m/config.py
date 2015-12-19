@@ -22,6 +22,7 @@ class Config(object):
     BASIC_AUTH_PASSWORD = os.environ['RBM2M_PASSWORD']
 
     MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+    MEDIA_BASEURL = os.environ.get('MEDIA_BASEURL')
     LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
     IMPORT_IMAGES = True
@@ -33,13 +34,11 @@ class Config(object):
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     REDIS_URL = os.environ.get('REDIS_URL')
-    MEDIA_BASEURL = 'http://polden-music.ru/rbm2m/public/media'
 
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DEBUG = True
-    MEDIA_BASEURL = os.environ.get('MEDIA_BASEURL')
 
     IMPORT_IMAGES = True
 

@@ -24,6 +24,8 @@
 
 `LOGS_DIR` - Directory for logs, must be writable. Default value: `APP_DIR/logs`
 
+`MEDIA_BASEURL` - Public URL for `MEDIA_DIR`
+
 
 ## How to set up development environment
 
