@@ -2,10 +2,7 @@
 IP ?= '127.0.0.1'
 PORT ?= 8001
 
-all: clean-pyc test
-
-test:
-	py.test tests examples
+all: clean-pyc
 
 serve:
 	gunicorn wsgi:app -c gunicorn_settings.py --bind $(IP):$(PORT)
