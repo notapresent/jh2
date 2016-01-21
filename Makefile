@@ -33,3 +33,6 @@ init:
 	@python -m rbm2m flush_redis
 	@python -m rbm2m import_genres
 	@python -m rbm2m reset_settings
+
+install-deps:
+	sudo apt-get install mysql-server redis-server supervisor libmysqlclient-dev
