@@ -124,9 +124,10 @@ class Scanner(object):
             xlsxexp.save(fn + '.xlsx')
 
     def save_csv(self):
-        fp = os.path.join(self.config.MEDIA_DIR, 'records-LP')
-        csvexp = exporter.CSVExporter(self.session, filters={'format': 'LP'})
-        csvexp.save(fp)
+        for fmt in FORMATS:
+            fn = os.path.join(self.config.MEDIA_DIR, 'records-{}'.format(fmt))
+            csvexp = exporter.CSVExporter(self.session, filters={'format': fmt})
+            csvexp.save(fn)
 
     def page_task(self, scan_id, page_no=None):
         """
